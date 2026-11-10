@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Silent Explorers</title>
+<meta name="description" content="Interactive 3D map of abandoned NASA and Soviet hardware on the Moon and Mars — with room for student-built mini-projects at every landing site.">
+<style>
+  /*
+    Layout: a 3D globe (Moon / Mars, swappable) rendered with three.js,
+    orbited by the viewer; glowing markers sit at the real landing
+    coordinates of NASA hardware. Tapping one opens a story panel with
+    a NASA photo, first-person narration, and verified mission facts.
+  */
+  :root{
+    --bg:#0b1020;
+    --panel:#121a33;
+    --panel-2:#17213f;
+    --ink:#eef1fb;
+    --ink-dim:#aab2cf;
+    --rule:#2a3660;
+    --moon:#d9a15b;
+    --moon-dim:#6b5a3c;
+    --mars:#e2663b;
+    --mars-dim:#6b3a28;
+    --ok:#7fd8a6;
+  }
+  @media (prefers-color-scheme: light){
+    :root:not([data-theme="dark"]){
+      --bg:#0b1020; --panel:#121a33; --panel-2:#17213f; --ink:#eef1fb; --ink-dim:#aab2cf;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#0b1020; --panel:#121a33; --panel-2:#17213f; --ink:#eef1fb; --ink-dim:#aab2cf;
+    color-scheme: dark;
+  }
+
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Work Sans', ui-sans-serif, system-ui, sans-serif;
+    padding-left:max(16px, env(safe-area-inset-left, 0px));
+    padding-right:max(16px, env(safe-area-inset-right, 0px));
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.display{font-family:'Fraunces', Georgia, serif}
+  .mono{font-family:'IBM Plex Mono', ui-monospace, monospace; font-variant-numeric: tabular-nums;}
+
+  .starfield{
+    position:fixed; inset:0; z-index:-1;
+    background:
+      radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,.5) 50%, transparent 51%),
+      radial-gradient(1px 1px at 80% 10%, rgba(255,255,255,.4) 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 60% 70%, rgba(255,255,255,.5) 50%, transparent 51%),
+      radial-gradient(1px 1px at 30% 85%, rgba(255,255,255,.4) 50%, transparent 51%),
+      radial-gradient(1px 1px at 90% 60%, rgba(255,255,255,.35) 50%, transparent 51%),
+      radial-gradient(1.5px 1.5px at 45% 40%, rgba(255,255,255,.45) 50%, transparent 51%),
+      radial-gradient(1px 1px at 20% 55%, rgba(255,255,255,.3) 50%, transparent 51%),
+      radial-gradient(1px 1px at 70% 90%, rgba(255,255,255,.3) 50%, transparent 51%),
+      var(--bg);
+    background-size: 600px 600px;
+  }
+
+  .wrap{max-width:1040px; margin:0 auto; padding-block: 28px 56px;}
+
+  header.top{display:flex; flex-direction:column; gap:14px; margin-bottom:22px;}
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace; font-size:12px; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--ink-dim);
+  }
+  h1{font-size: clamp(28px, 5vw, 44px); line-height:1.08; margin:4px 0 0; text-wrap:balance;}
+  .lede{color:var(--ink-dim); max-width: 62ch; line-height:1.55; margin:10px 0 0; font-size:15px;}
+
+  .badges{display:flex; flex-wrap:wrap; gap:8px; margin-top:4px;}
+  .badge{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:.04em;
+    color:var(--ink-dim); border:1px solid var(--rule); border-radius:999px;
+    padding:4px 10px; white-space:nowrap;
+  }
+
+  .toggle{
+    display:inline-flex; gap:4px; background:var(--panel); border:1px solid var(--rule);
+    border-radius:999px; padding:4px; margin-top:6px; width:fit-content;
+  }
+  .toggle button{
+    appearance:none; border:none; background:transparent; color:var(--ink-dim);
+    font-family:'Work Sans', sans-serif; font-weight:600; font-size:14px;
+    padding:8px 18px; border-radius:999px; cursor:pointer; transition:background .15s, color .15s;
+  }
+  .toggle button[aria-selected="true"]{background:var(--panel-2); color:var(--ink);}
+  .toggle button.moon-on[aria-selected="true"]{box-shadow: inset 0 0 0 1px var(--moon-dim); color:var(--moon);}
+  .toggle button.mars-on[aria-selected="true"]{box-shadow: inset 0 0 0 1px var(--mars-dim); color:var(--mars);}
+
+  .stage-shell{
+    position:relative; border:1px solid var(--rule); border-radius:20px;
+    background:radial-gradient(circle at 50% 35%, #0e1430, var(--panel-2) 70%);
+    overflow:hidden; aspect-ratio: 16/10; max-height:560px; touch-action:none;
+  }
+  .stage-shell canvas{display:block; width:100%; height:100%;}
+  .stage-shell.loading::after{
+    content:"Loading 3D view…"; position:absolute; inset:0; display:flex; align-items:center;
+    justify-content:center; font-family:'IBM Plex Mono', monospace; font-size:12px; color:var(--ink-dim);
+  }
+
+  .stage-caption{
+    position:absolute; left:14px; bottom:12px; font-family:'IBM Plex Mono', monospace;
+    font-size:11px; color:var(--ink-dim); max-width:72%; line-height:1.4; pointer-events:none;
+  }
+  .stage-hint{
+    position:absolute; right:14px; bottom:12px; font-family:'IBM Plex Mono', monospace;
+    font-size:11px; color:var(--ink-dim); text-align:right; pointer-events:none;
+  }
+  #hoverTip{
+    position:absolute; pointer-events:none; transform:translate(-50%, -140%);
+    background:var(--panel-2); border:1px solid var(--rule); border-radius:8px;
+    padding:5px 10px; font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--ink);
+    opacity:0; transition:opacity .12s ease; white-space:nowrap; z-index:5;
+  }
+  #hoverTip.show{opacity:1;}
+  #hoverTip .star{color:var(--moon); margin-left:4px;}
+
+  .legend{display:flex; gap:16px; margin-top:12px; flex-wrap:wrap;}
+  .legend span{display:inline-flex; align-items:center; gap:6px; font-size:12.5px; color:var(--ink-dim);}
+  .legend i{width:9px; height:9px; border-radius:50%; display:inline-block;}
+
+  .chip-row{display:flex; flex-wrap:wrap; gap:8px; margin-top:16px;}
+  .chip{
+    appearance:none; border:1px solid var(--rule); background:var(--panel);
+    color:var(--ink-dim); font-family:'IBM Plex Mono', monospace; font-size:11.5px;
+    padding:7px 12px; border-radius:999px; cursor:pointer; transition:border-color .15s, color .15s;
+  }
+  .chip:hover, .chip:focus-visible{color:var(--ink); border-color:var(--ink-dim);}
+  .chip.moon-chip{border-color:var(--moon-dim);}
+  .chip.mars-chip{border-color:var(--mars-dim);}
+
+  /* story panel */
+  .overlay{
+    position:fixed; inset:0; background:rgba(5,8,18,.55); opacity:0; pointer-events:none;
+    transition:opacity .25s ease; z-index:20;
+  }
+  .overlay.open{opacity:1; pointer-events:auto;}
+
+  .panel{
+    position:fixed; top:0; right:0; height:100%; width:min(440px, 100%);
+    background:var(--panel); border-left:1px solid var(--rule);
+    transform:translateX(100%); transition:transform .32s ease; z-index:21;
+    display:flex; flex-direction:column; overflow-y:auto;
+    padding: max(20px, env(safe-area-inset-top, 0px)) max(20px, env(safe-area-inset-right, 0px)) 24px 20px;
+  }
+  .panel.open{transform:translateX(0);}
+
+  @media (max-width: 680px){
+    .panel{
+      top:auto; bottom:0; right:0; left:0; width:100%; height:min(88vh, 680px);
+      border-left:none; border-top:1px solid var(--rule); border-radius:18px 18px 0 0;
+      transform:translateY(100%);
+      padding: 18px max(18px, env(safe-area-inset-right,0px)) max(20px, env(safe-area-inset-bottom,0px)) max(18px, env(safe-area-inset-left,0px));
+    }
+    .panel.open{transform:translateY(0);}
+  }
+
+  .panel-close{
+    position:absolute; top:16px; right:16px; appearance:none; border:1px solid var(--rule);
+    background:var(--panel-2); color:var(--ink); width:32px; height:32px; border-radius:50%;
+    cursor:pointer; font-size:16px; line-height:1; z-index:2;
+  }
+  .project-stage{
+    width:calc(100% + 40px); margin:-20px -20px 0; aspect-ratio:16/10; overflow:hidden;
+    background:var(--panel-2); position:relative;
+  }
+  .project-stage img{width:100%; height:100%; object-fit:cover; display:block;}
+  .project-stage .credit{
+    position:absolute; right:8px; bottom:8px; font-family:'IBM Plex Mono', monospace;
+    font-size:10px; letter-spacing:.06em; color:#fff; background:rgba(0,0,0,.45);
+    padding:2px 7px; border-radius:999px; z-index:2;
+  }
+  .cta-empty{position:absolute; inset:0;}
+  .cta-empty .msg{
+    position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:2;
+    font-family:'IBM Plex Mono', monospace; font-size:11.5px; color:var(--ink);
+    background:rgba(5,8,18,.6); padding:8px 14px; border-radius:10px; white-space:nowrap;
+    border:1px solid var(--rule);
+  }
+  .project-byline{
+    font-family:'IBM Plex Mono', monospace; font-size:10.5px; color:var(--ink-dim);
+    margin-top:8px; letter-spacing:.02em;
+  }
+  .panel-kind{font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:.1em; text-transform:uppercase; margin-top:12px; display:block;}
+  .panel-kind.moon-on{color:var(--moon);}
+  .panel-kind.mars-on{color:var(--mars);}
+  .panel h2{margin:6px 0 0; font-size:26px; line-height:1.12; text-wrap:balance;}
+  .voice{
+    margin:16px 0 0; padding:14px 16px; border-radius:12px; background:var(--panel-2);
+    border-left:3px solid var(--rule); font-size:15px; line-height:1.6; font-style:italic;
+    color:var(--ink);
+  }
+  .voice::before{content:"\201C"; font-family:'Fraunces', serif; opacity:.6;}
+  .voice::after{content:"\201D"; font-family:'Fraunces', serif; opacity:.6;}
+
+  .section-label{
+    font-family:'IBM Plex Mono', monospace; font-size:11px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--ink-dim); margin:22px 0 8px;
+  }
+  dl.facts{margin:0; display:grid; grid-template-columns: auto 1fr; gap:6px 14px; font-size:13.5px;}
+  dl.facts dt{color:var(--ink-dim); font-family:'IBM Plex Mono', monospace; font-size:11.5px; white-space:nowrap;}
+  dl.facts dd{margin:0; color:var(--ink);}
+
+  .why{font-size:14px; line-height:1.6; color:var(--ink); margin:0;}
+  .note{
+    margin-top:18px; padding:12px 14px; border-radius:10px; background:rgba(127,216,166,.08);
+    border:1px solid rgba(127,216,166,.35); font-size:13px; line-height:1.55; color:var(--ink);
+  }
+  .note b{color:var(--ok);}
+
+  footer{margin-top:34px; border-top:1px solid var(--rule); padding-top:16px;}
+  footer p{color:var(--ink-dim); font-size:12.5px; line-height:1.6; max-width:70ch; margin:0 0 6px;}
+</style>
+</head>
+<body>
+
+<div class="starfield" aria-hidden="true"></div>
+
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">Abandoned but Not Forgotten</div>
+    <h1 class="display">Silent Explorers</h1>
+    <p class="lede">Every glowing point on this globe is a real machine NASA (or its partners) sent to the Moon or Mars — and never brought home. Drag to look around, then tap a marker to hear its story, see its last photo, and read what it really did.</p>
+    <div class="badges">
+      <span class="badge">Built for ages 10–14</span>
+      <span class="badge">8 real missions, 1960s–2020s</span>
+      <span class="badge">Approximate real landing coordinates</span>
+    </div>
+    <div class="toggle" role="tablist" aria-label="Choose a world">
+      <button type="button" class="moon-on" role="tab" aria-selected="true" data-world="moon">Moon</button>
+      <button type="button" class="mars-on" role="tab" aria-selected="false" data-world="mars">Mars</button>
+    </div>
+  </header>
+
+  <div class="stage-shell loading" id="stageShell">
+    <div class="stage-caption" id="stageCaption">Positions use each mission's real landing coordinates on a stylized surface.</div>
+    <div class="stage-hint">Drag to rotate · Scroll to zoom · Tap a marker</div>
+    <div id="hoverTip"></div>
+  </div>
+
+  <div class="legend">
+    <span><i style="background:var(--moon)"></i>Lunar hardware</span>
+    <span><i style="background:var(--mars)"></i>Martian hardware</span>
+    <span>★ marker = a student has attached their own animation or mini-game here</span>
+  </div>
+
+  <div class="chip-row" id="chipRow"></div>
+
+  <footer>
+    <p><strong>About this project.</strong> Made for NASA Space Apps Challenge 2026 — "Abandoned but Not Forgotten: Storytelling about NASA's Discarded Equipment on the Moon and Mars." Dates, mission durations, and outcomes are drawn from public NASA/JPL mission records. Photos are public-domain NASA imagery. First-person narration is a storytelling device; it dramatizes real events rather than inventing new ones.</p>
+    <p>One documented myth is corrected on purpose: Opportunity's famous "my battery is low and it's getting dark" line was never an actual transmission from the rover — see its card for what was really sent.</p>
+    <p><strong>Student projects.</strong> Each marker can carry its own small animation or mini-game, made by a different student, instead of the plain photo. Eagle and Opportunity already have one each as examples — every other marker is open for someone to claim. A project is just a short script following a fixed contract (an <code>init(container)</code> function that draws into a box and returns a cleanup function); ask a mentor to add yours once it's ready.</p>
+  </footer>
+</div>
+
+<div class="overlay" id="overlay"></div>
+<aside class="panel" id="panel" role="dialog" aria-modal="true" aria-label="Mission story">
+  <button class="panel-close" id="panelClose" aria-label="Close">✕</button>
+  <div id="panelBody"></div>
+</aside>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="projects/eagle.js"></script>
+<script src="projects/opportunity.js"></script>
+<script>
+(function(){
+  var DATA = {
+    moon: [
+      {
+        id:"eagle", name:"Eagle — Apollo 11 Descent Stage", kind:"Lander (half of)",
+        lat:0.67, lng:23.47, photo:"assets/img/eagle.jpg",
+        voice:"I'm Eagle's lower half — the part that never leaves. On July 20, 1969, I carried Neil and Buzz down from orbit on a cushion of rocket fire, landed with less than thirty seconds of fuel left, and then stayed exactly here while my upper half carried them back to orbit. I'm still standing at Tranquility Base, my foil scorched, my ladder waiting for footsteps that never came back.",
+        facts:[["Launched","July 16, 1969 (Apollo 11)"],["Landed","July 20, 1969, Sea of Tranquility"],["Status","Stationary, permanent"],["Role","Lowered astronauts to the surface; became their launch pad home"]],
+        why:"Eagle proved humans could land, work, and leave another world. Its throttleable descent engine and radar-guided landing became the template every crewed Moon landing since has followed."
+      },
+      {
+        id:"lunokhod2", name:"Lunokhod 2", kind:"Soviet rover",
+        lat:25.85, lng:30.45, photo:"assets/img/lunokhod2.jpg",
+        voice:"Soviet engineers built me to go further than anyone had dared. Across four Earth months in 1973, I rolled nearly 39 kilometers across Le Monnier crater, photographed the ground, and tested the soil beneath my eight wheels — until I rolled through a dust-filled crater, my solar panel clogged, and I went dark. For decades I was just a line in old mission logs. Then in 2010, a NASA orbiter photographed my tracks, still pressed into the dust, and the world remembered I was here.",
+        facts:[["Landed","January 1973"],["Distance driven","~39 km — a lunar record for 41 years"],["Status","Rediscovered in 2010 orbital photos"],["Role","Soil mechanics, photography, X-ray astronomy"]],
+        why:"Lunokhod 2 held the off-world driving record until NASA's Opportunity rover finally beat it on Mars in 2014 — a record set on one world, broken on another."
+      },
+      {
+        id:"lrv17", name:"Lunar Roving Vehicle — Apollo 17", kind:"Moon buggy",
+        lat:20.19, lng:30.77, photo:"assets/img/lrv17.jpg",
+        voice:"I'm the last car anyone has driven on the Moon. In December 1972, Gene Cernan and Jack Schmitt bounced me across the Taurus–Littrow valley for three days, hauling rock samples and a seismometer between stops. When they climbed into their ascent module for the final time, they parked me a short walk away and aimed my camera at the launch pad, so Mission Control could watch them go. Nobody has touched me since.",
+        facts:[["Mission","Apollo 17, December 1972"],["Distance driven","~35 km over three moonwalks"],["Status","Parked at Taurus–Littrow, camera still aimed at the old landing site"],["Role","Carried astronauts and 115 kg of rock samples"]],
+        why:"The rover let astronauts range far beyond walking distance, multiplying how much science the last three Apollo crews could bring home."
+      },
+      {
+        id:"surveyor3", name:"Surveyor 3", kind:"Robotic lander",
+        lat:-3.01, lng:-23.42, photo:"assets/img/surveyor3.jpg",
+        voice:"I landed in the Ocean of Storms in 1967, dug a small trench with my robot arm, and sent home 6,300 photographs before the two-week lunar night finally switched me off. Two and a half years later, I had visitors: Apollo 12 astronauts walked over, cut pieces off my frame with tin snips, and carried me home in pieces — the only time anyone has ever brought hardware back from another world to study.",
+        facts:[["Landed","April 1967, Ocean of Storms"],["Visited by","Apollo 12 astronauts, November 1969"],["Status","Partially removed; remainder still on the surface"],["Role","Tested soil strength ahead of the Apollo landings"]],
+        why:"Surveyor 3 proved the Moon's surface could hold a landing spacecraft, and its retrieved parts taught scientists how materials age after years of space exposure."
+      }
+    ],
+    mars: [
+      {
+        id:"opportunity", name:"Opportunity", kind:"Rover",
+        lat:-2.29, lng:-5.26, photo:"assets/img/opportunity.jpg",
+        voice:"I was built with a 90-day warranty and I worked for almost 15 years. I found proof that Mars once had drinkable water, drove farther than any rover in history — over 45 kilometers — and outlasted every engineer's prediction. In June 2018, a dust storm swallowed the entire planet. My solar panels went black, and I never phoned home again.",
+        facts:[["Landed","January 2004"],["Planned mission","90 days"],["Actual mission","14 years, 221 days"],["Distance driven","45.16 km — an off-world record"],["Status","Silent since June 2018, still parked in Perseverance Valley"]],
+        why:"Opportunity found hematite \"blueberries\" and clay minerals proving ancient Mars had flowing, drinkable water — reshaping what we know about the planet's past.",
+        note:"<b>Setting the record straight:</b> \"My battery is low and it's getting dark\" was never actually transmitted. It's a journalist's poetic paraphrase of Opportunity's real last engineering data, which simply reported falling power and rising dust. It went viral anyway because it captured something true."
+      },
+      {
+        id:"spirit", name:"Spirit", kind:"Rover",
+        lat:-14.57, lng:175.47, photo:"assets/img/spirit.jpg",
+        voice:"Opportunity and I were twins, built side by side, landed three weeks apart in January 2004. I found proof of an ancient hot spring and explosive volcanic rock — signs Mars once had conditions where microbial life might have thrived. In 2009 my wheels broke through a crust into soft sand I couldn't climb out of. I kept working anyway, tilted and stuck, until a Martian winter finally froze my batteries for good.",
+        facts:[["Landed","January 2004, Gusev Crater"],["Planned mission","90 days"],["Actual mission","~6 years"],["Status","Stuck in a sand dune since 2009; last contact March 2010"],["Role","Found evidence of ancient hot-spring and explosive volcanic activity"]],
+        why:"Spirit showed that parts of ancient Mars had warm, mineral-rich water — exactly the conditions life needs to get started."
+      },
+      {
+        id:"viking1", name:"Viking 1 Lander", kind:"Lander",
+        lat:22.48, lng:-47.95, photo:"assets/img/viking1.jpg",
+        voice:"I was the first machine to send home a clear picture from the surface of Mars — and the first to keep working there for years. I scooped soil into my own onboard chemistry lab, searching for signs of life, and watched Martian weather for over six years. In 1982, a routine software update meant to improve how I aimed my antenna accidentally overwrote the command instead. I lost contact with Earth forever, still sitting exactly where I landed.",
+        facts:[["Landed","July 20, 1976, Chryse Planitia"],["Planned mission","90 days"],["Actual mission","6 years, 116 days"],["Status","Contact lost Nov 1982 after a ground-command error; lander still stationary"],["Role","First long-duration Mars surface mission; searched for biosignatures"]],
+        why:"Viking 1 proved a spacecraft could survive and work on Mars for years, and its biology experiments still shape how scientists search for life today."
+      },
+      {
+        id:"insight", name:"InSight", kind:"Lander",
+        lat:4.50, lng:135.92, photo:"assets/img/insight.jpg",
+        voice:"I didn't drive anywhere — my job was to listen. I set a seismometer on the Martian ground and felt the planet's pulse: over 1,300 marsquakes, including some I could trace back to meteor strikes just from the shaking. But Mars has no rain or strong wind to clear dust away, and after four years my solar panels were buried too deep in fine red dust to keep my batteries charged. My last photo, sent in December 2022, was of myself — dust and all.",
+        facts:[["Landed","November 2018, Elysium Planitia"],["Operated","4 years, 1 month"],["Marsquakes detected","1,300+"],["Status","Out of power; final contact December 2022"],["Role","First mission to measure Mars's seismic activity and interior"]],
+        why:"InSight revealed that Mars has a liquid core and a crust shaped by ancient impacts — the first real look inside another rocky planet besides Earth."
+      }
+    ]
+  };
+
+  var COLOR = { moon:0xd9a15b, mars:0xe2663b };
+  var RADIUS = 1.2;
+
+  // ---------- texture helpers ----------
+  function craterTexture(opts){
+    var c = document.createElement("canvas");
+    c.width = 1024; c.height = 512;
+    var ctx = c.getContext("2d");
+    var g = ctx.createLinearGradient(0,0,0,512);
+    g.addColorStop(0, opts.top);
+    g.addColorStop(1, opts.bottom);
+    ctx.fillStyle = g;
+    ctx.fillRect(0,0,1024,512);
+    var rand = (function(seed){
+      return function(){ seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
+    })(opts.seed || 7);
+    for (var i=0;i<140;i++){
+      var x = rand()*1024, y = rand()*512, r = 4 + rand()*34;
+      var rg = ctx.createRadialGradient(x-r*0.25, y-r*0.25, r*0.1, x, y, r);
+      rg.addColorStop(0, opts.craterMid);
+      rg.addColorStop(0.7, opts.craterEdge);
+      rg.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = rg;
+      ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+    }
+    var tex = new THREE.CanvasTexture(c);
+    tex.wrapS = THREE.RepeatWrapping;
+    return tex;
+  }
+
+  function dotTexture(hex){
+    var c = document.createElement("canvas");
+    c.width = c.height = 128;
+    var ctx = c.getContext("2d");
+    var col = "#" + hex.toString(16).padStart(6,"0");
+    var g = ctx.createRadialGradient(64,64,0,64,64,60);
+    g.addColorStop(0, "#ffffff");
+    g.addColorStop(0.25, col);
+    g.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(64,64,60,0,Math.PI*2); ctx.fill();
+    return new THREE.CanvasTexture(c);
+  }
+
+  function ringTexture(hex){
+    var c = document.createElement("canvas");
+    c.width = c.height = 128;
+    var ctx = c.getContext("2d");
+    var col = "#" + hex.toString(16).padStart(6,"0");
+    ctx.strokeStyle = col;
+    ctx.lineWidth = 6;
+    ctx.beginPath(); ctx.arc(64,64,48,0,Math.PI*2); ctx.stroke();
+    return new THREE.CanvasTexture(c);
+  }
+
+  function latLngToVec3(lat, lng, radius){
+    var phi = (90 - lat) * Math.PI/180;
+    var theta = (lng + 180) * Math.PI/180;
+    return new THREE.Vector3(
+      -radius * Math.sin(phi) * Math.cos(theta),
+       radius * Math.cos(phi),
+       radius * Math.sin(phi) * Math.sin(theta)
+    );
+  }
+
+  // ---------- three.js setup ----------
+  var shell = document.getElementById("stageShell");
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(42, 1, 0.1, 100);
+  camera.position.set(0, 0.6, 3.1);
+
+  var renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  shell.appendChild(renderer.domElement);
+
+  var controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.08;
+  controls.enablePan = false;
+  controls.minDistance = 1.8;
+  controls.maxDistance = 5.5;
+  controls.autoRotate = true;
+  controls.autoRotateSpeed = 0.6;
+
+  scene.add(new THREE.AmbientLight(0xffffff, 0.55));
+  var sun = new THREE.DirectionalLight(0xffffff, 1.1);
+  sun.position.set(3, 2, 4);
+  scene.add(sun);
+
+  var groups = {};
+  var markers = { moon:[], mars:[] };
+
+  function buildWorld(key, textureOpts){
+    var group = new THREE.Group();
+    var geo = new THREE.SphereGeometry(RADIUS, 48, 48);
+    var mat = new THREE.MeshStandardMaterial({ map: craterTexture(textureOpts), roughness:1, metalness:0 });
+    group.add(new THREE.Mesh(geo, mat));
+
+    var dotTex = dotTexture(COLOR[key]);
+    var ringTex = ringTexture(COLOR[key]);
+
+    DATA[key].forEach(function(item, i){
+      var pos = latLngToVec3(item.lat, item.lng, RADIUS * 1.015);
+
+      var dotMat = new THREE.SpriteMaterial({ map:dotTex, depthTest:true, transparent:true });
+      var dot = new THREE.Sprite(dotMat);
+      dot.scale.set(0.11, 0.11, 1);
+      dot.position.copy(pos);
+      dot.userData.item = item;
+      dot.userData.world = key;
+      group.add(dot);
+
+      var ringMat = new THREE.SpriteMaterial({ map:ringTex, transparent:true, opacity:0, depthTest:true });
+      var ring = new THREE.Sprite(ringMat);
+      ring.position.copy(pos);
+      group.add(ring);
+
+      markers[key].push({ dot:dot, ring:ring, phase:(i/DATA[key].length) });
+    });
+
+    group.visible = key === "moon";
+    scene.add(group);
+    groups[key] = group;
+  }
+
+  buildWorld("moon", { top:"#4a4b57", bottom:"#1c1d26", craterMid:"rgba(10,10,14,0.55)", craterEdge:"rgba(10,10,14,0.0)", seed:11 });
+  buildWorld("mars", { top:"#a1512f", bottom:"#4a2415", craterMid:"rgba(40,14,4,0.6)", craterEdge:"rgba(40,14,4,0.0)", seed:47 });
+
+  function resize(){
+    var w = shell.clientWidth, h = shell.clientHeight;
+    if (!w || !h) return;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h;
+    camera.updateProjectionMatrix();
+  }
+  new ResizeObserver(resize).observe(shell);
+  resize();
+  shell.classList.remove("loading");
+
+  var clock = new THREE.Clock();
+  function animate(){
+    requestAnimationFrame(animate);
+    var t = clock.getElapsedTime();
+    ["moon","mars"].forEach(function(key){
+      markers[key].forEach(function(m){
+        var local = (t * 0.55 + m.phase) % 1;
+        m.ring.material.opacity = Math.max(0, 0.6 * (1 - local));
+        var s = 0.1 + local * 0.5;
+        m.ring.scale.set(s, s, 1);
+      });
+    });
+    controls.update();
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  // ---------- interaction ----------
+  var raycaster = new THREE.Raycaster();
+  var pointerDown = null;
+  var canvasEl = renderer.domElement;
+
+  var hoverTip = document.getElementById("hoverTip");
+
+  function hitTest(e){
+    var rect = canvasEl.getBoundingClientRect();
+    var ndc = new THREE.Vector2(
+      ((e.clientX - rect.left) / rect.width) * 2 - 1,
+      -((e.clientY - rect.top) / rect.height) * 2 + 1
+    );
+    raycaster.setFromCamera(ndc, camera);
+    var activeDots = markers[currentWorld].map(function(m){ return m.dot; });
+    var hits = raycaster.intersectObjects(activeDots, false);
+    return hits.length ? hits[0].object.userData.item : null;
+  }
+
+  canvasEl.addEventListener("pointerdown", function(e){
+    pointerDown = { x:e.clientX, y:e.clientY };
+  });
+  canvasEl.addEventListener("pointerup", function(e){
+    if (!pointerDown) return;
+    var dx = e.clientX - pointerDown.x, dy = e.clientY - pointerDown.y;
+    pointerDown = null;
+    if (Math.sqrt(dx*dx + dy*dy) > 6) return; // was a drag, not a tap
+    var item = hitTest(e);
+    if (item) openPanel(currentWorld, item);
+  });
+
+  canvasEl.addEventListener("pointermove", function(e){
+    var item = hitTest(e);
+    var shellRect = shell.getBoundingClientRect();
+    if (item){
+      var hasProject = window.STUDENT_PROJECTS && window.STUDENT_PROJECTS[item.id];
+      hoverTip.innerHTML = item.name + (hasProject ? ' <span class="star">★</span>' : '');
+      hoverTip.style.left = (e.clientX - shellRect.left) + "px";
+      hoverTip.style.top = (e.clientY - shellRect.top) + "px";
+      hoverTip.classList.add("show");
+      canvasEl.style.cursor = "pointer";
+    } else {
+      hoverTip.classList.remove("show");
+      canvasEl.style.cursor = "";
+    }
+  });
+  canvasEl.addEventListener("pointerleave", function(){
+    hoverTip.classList.remove("show");
+    canvasEl.style.cursor = "";
+  });
+
+  // ---------- UI: toggle, chips, panel ----------
+  var toggleBtns = document.querySelectorAll(".toggle button");
+  var chipRow = document.getElementById("chipRow");
+  var overlay = document.getElementById("overlay");
+  var panel = document.getElementById("panel");
+  var panelBody = document.getElementById("panelBody");
+  var panelClose = document.getElementById("panelClose");
+  var currentWorld = "moon";
+  var activeCleanup = null;
+
+  function stopActiveProject(){
+    if (activeCleanup){
+      try { activeCleanup(); } catch(e){ /* a student's module threw on cleanup; ignore */ }
+      activeCleanup = null;
+    }
+  }
+
+  function buildChips(world){
+    chipRow.innerHTML = "";
+    DATA[world].forEach(function(item){
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "chip " + world + "-chip";
+      b.textContent = item.name;
+      b.addEventListener("click", function(){ openPanel(world, item); });
+      chipRow.appendChild(b);
+    });
+  }
+
+  function openPanel(world, item){
+    stopActiveProject();
+    var isMoon = world === "moon";
+    var noteHtml = item.note ? '<div class="note">' + item.note + '</div>' : '';
+    var factsHtml = item.facts.map(function(f){
+      return '<dt>' + f[0] + '</dt><dd>' + f[1] + '</dd>';
+    }).join('');
+    var proj = window.STUDENT_PROJECTS && window.STUDENT_PROJECTS[item.id];
+    var stageHtml = proj
+      ? '<div class="project-stage" id="projectStage"></div>'
+      : '<div class="project-stage" id="projectStage"><div class="cta-empty"><img src="' + item.photo + '" alt="NASA photo related to ' + item.name + '" loading="lazy"><span class="credit">NASA</span><span class="msg">No student project yet — this could be yours</span></div></div>';
+    var bylineHtml = proj
+      ? '<div class="project-byline">Student project: “' + proj.title + '” by ' + proj.author + '</div>'
+      : '<div class="project-byline">Showing the NASA reference photo instead</div>';
+
+    panelBody.innerHTML =
+      stageHtml + bylineHtml +
+      '<span class="panel-kind ' + (isMoon ? 'moon-on' : 'mars-on') + '">' + (isMoon ? 'Lunar hardware' : 'Martian hardware') + ' &middot; ' + item.kind + '</span>' +
+      '<h2 class="display">' + item.name + '</h2>' +
+      '<p class="voice">' + item.voice + '</p>' +
+      '<div class="section-label">Mission log</div>' +
+      '<dl class="facts mono">' + factsHtml + '</dl>' +
+      '<div class="section-label">Why it mattered</div>' +
+      '<p class="why">' + item.why + '</p>' +
+      noteHtml;
+
+    if (proj){
+      var stageEl = document.getElementById("projectStage");
+      try {
+        var cleanup = proj.init(stageEl, item);
+        activeCleanup = (typeof cleanup === "function") ? cleanup : null;
+      } catch(err){
+        stageEl.innerHTML = '<div class="cta-empty"><span class="msg">This project failed to load</span></div>';
+      }
+    }
+
+    overlay.classList.add("open");
+    panel.classList.add("open");
+  }
+
+  function closePanel(){
+    stopActiveProject();
+    overlay.classList.remove("open");
+    panel.classList.remove("open");
+  }
+
+  overlay.addEventListener("click", closePanel);
+  panelClose.addEventListener("click", closePanel);
+  document.addEventListener("keydown", function(e){
+    if (e.key === "Escape") closePanel();
+  });
+
+  toggleBtns.forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var world = btn.dataset.world;
+      if (world === currentWorld) return;
+      currentWorld = world;
+      toggleBtns.forEach(function(b){ b.setAttribute("aria-selected", b === btn ? "true" : "false"); });
+      groups.moon.visible = world === "moon";
+      groups.mars.visible = world === "mars";
+      buildChips(world);
+      closePanel();
+    });
+  });
+
+  buildChips("moon");
+})();
+</script>
+
+</body>
+</html>
