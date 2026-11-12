@@ -5,11 +5,12 @@
 
     window.createVideoProject({
       id: "<location id>",                      // which marker the clip belongs to
-      title: "Clip name",
-      author: "Your name",
+      title: "Clip name",                       // a string, or { en: "...", uk: "..." }
+      author: "Your name",                      // a string, or { en, uk }
       src: "assets/video/<location id>.mp4",    // H.264 + AAC, see README for the ffmpeg command
       poster: "assets/video/<location id>.jpg", // one frame of the clip, shown before playback
-      note: "Artist's reconstruction — not NASA footage"   // honesty label, always shown
+      note: "Artist's reconstruction — not NASA footage",  // honesty label, always shown (string or { en, uk })
+      alt: "What the poster shows"              // optional description of the poster (string or { en, uk })
     });
 
   It registers a normal STUDENT_PROJECTS entry (see eagle.js for the contract)
@@ -17,19 +18,26 @@
   the clip starts with sound. Portrait clips are shown whole, with a blurred
   copy of the poster filling the sides. Styles: css/styles.css, ".video-project".
   Load this file before any project file that calls it.
+
+  Languages: title, author, note and alt may each be a plain string or an
+  object { en: "...", uk: "..." } (resolved with window.pick). The texts of the
+  button, the label and the error message come from the dictionary (window.t,
+  js/i18n.js). When the language is switched while the clip is open, only these
+  texts are replaced: the video keeps playing.
 */
 (function(){
-  var DEFAULT_NOTE = "Artist's reconstruction — not NASA footage";
+  // window.t / window.pick come from js/i18n.js; these fallbacks keep the helper usable without it
+  function tr(key, params, fallback){ return window.t ? window.t(key, params) : fallback; }
+  function pk(value){ return window.pick ? window.pick(value) : (value && typeof value === "object" ? (value.en || "") : value); }
   var PLAY_ICON = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z"/></svg>';
 
   window.STUDENT_PROJECTS = window.STUDENT_PROJECTS || {};
 
   window.createVideoProject = function(opts){
     if (!opts || !opts.id || !opts.src) return;
-    var note = opts.note || DEFAULT_NOTE;
 
     window.STUDENT_PROJECTS[opts.id] = {
-      title: opts.title || "Video",
+      title: opts.title || { en: "Video", uk: "Відео" },
       author: opts.author || "",
       type: "video",
       init: function(container){
@@ -48,7 +56,7 @@
         if (opts.poster){
           posterImg = document.createElement("img");
           posterImg.className = "vp-poster";
-          posterImg.alt = "";
+          posterImg.alt = pk(opts.alt) || "";
           posterImg.src = opts.poster;
           wrap.appendChild(posterImg);
         }
@@ -61,24 +69,34 @@
         video.muted = false;
         video.controls = false; // native controls appear once the viewer starts the clip
         if (opts.poster) video.poster = opts.poster;
-        video.setAttribute("aria-label", (opts.title || "Video") + " — student video");
         wrap.appendChild(video);
 
         var btn = document.createElement("button");
         btn.type = "button";
         btn.className = "vp-play";
-        btn.setAttribute("aria-label", "Play video with sound");
         btn.innerHTML = PLAY_ICON;
         wrap.appendChild(btn);
 
         var noteEl = document.createElement("span");
         noteEl.className = "vp-note";
-        noteEl.textContent = note;
         wrap.appendChild(noteEl);
 
         container.appendChild(wrap);
 
         var alive = true;
+        var msgEl = null;
+
+        // every word on the clip's controls; called now and on each language switch (nothing is rebuilt)
+        function setTexts(){
+          var title = pk(opts.title) || tr("video.title", null, "Video");
+          video.setAttribute("aria-label", tr("video.aria", { title: title }, title + " — student video"));
+          btn.setAttribute("aria-label", tr("video.play", null, "Play video with sound"));
+          noteEl.textContent = pk(opts.note) || tr("video.note", null, "Artist's reconstruction — not NASA footage");
+          if (posterImg) posterImg.alt = pk(opts.alt) || "";
+          if (msgEl) msgEl.textContent = tr("video.error", null, "This video could not be loaded");
+        }
+        setTexts();
+        var offLang = window.onLangChange ? window.onLangChange(setTexts) : null;
 
         function showError(){
           if (!alive || wrap.classList.contains("failed")) return;
@@ -86,10 +104,10 @@
           wrap.classList.remove("playing");
           video.controls = false;
           btn.hidden = true;
-          var msg = document.createElement("span");
-          msg.className = "vp-msg";
-          msg.textContent = "This video could not be loaded";
-          wrap.appendChild(msg);
+          msgEl = document.createElement("span");
+          msgEl.className = "vp-msg";
+          msgEl.textContent = tr("video.error", null, "This video could not be loaded");
+          wrap.appendChild(msgEl);
         }
         function onError(){ showError(); }
         function onPlaying(){ wrap.classList.add("playing"); }
@@ -120,6 +138,7 @@
 
         return function cleanup(){
           alive = false;
+          if (offLang) offLang();
           video.removeEventListener("error", onError);
           video.removeEventListener("playing", onPlaying);
           btn.removeEventListener("click", onPlayClick);

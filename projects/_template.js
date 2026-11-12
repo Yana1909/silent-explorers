@@ -20,6 +20,11 @@
   `container` is an empty box, about 16:10, already sized by the page.
   `item` is the machine's record (item.name, item.facts, ...), if you need it.
   init() MUST return a cleanup() function that stops everything you started.
+
+  Two languages (English / Українська): pick({ en: "Hello", uk: "Привіт" }) gives the text in the
+  current language, t("key") reads the shared dictionary, and onLangChange(fn) tells you when the
+  reader switches language. The card does NOT restart on a switch, so only redraw your texts in fn
+  (it returns an "unsubscribe" function: call it in cleanup()). See "Language" in README.md.
 */
 (function(){
   var LOCATION_ID = "";          // <-- your location id, e.g. "spirit"
@@ -27,8 +32,8 @@
 
   window.STUDENT_PROJECTS = window.STUDENT_PROJECTS || {};
   window.STUDENT_PROJECTS[LOCATION_ID] = {
-    title: "My project",         // <-- short name of your project
-    author: "Your name",         // <-- your name
+    title: "My project",         // <-- short name of your project (or { en: "...", uk: "..." })
+    author: "Your name",         // <-- your name (or { en, uk })
     type: "animation",           // <-- "animation" or "game"
     init: function(container, item){
       // ---------- canvas that always fills the box ----------

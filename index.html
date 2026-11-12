@@ -13,57 +13,63 @@
 </head>
 <body>
 
-<a class="skip" href="#collection">Skip to the list of machines</a>
+<a class="skip" href="#collection" data-i18n="a11y.skip">Skip to the list of machines</a>
 
 <main>
   <!--
     First screen: the globe is the whole background of this section (canvas is
     appended to #stageShell). Header and dock float above it.
   -->
-  <section class="hero" id="hero" aria-label="Globe">
+  <section class="hero" id="hero" aria-label="Globe" data-i18n-attr="aria-label:hero.aria">
     <div class="hero-sky" aria-hidden="true"></div>
-    <div class="stage-shell loading" id="stageShell">
-      <div class="fallback-planet">The 3D globe can't run on this device. Use the list of machines below.</div>
+    <div class="stage-shell loading" id="stageShell" data-loading="Loading the globe…" data-i18n-attr="data-loading:globe.loading">
+      <div class="fallback-planet" data-i18n="globe.fallback">The 3D globe can't run on this device. Use the list of machines below.</div>
       <div id="hoverTip" aria-hidden="true"></div>
     </div>
 
     <header class="top" id="heroTop">
       <div class="brand">
-        <p class="eyebrow">Abandoned but Not Forgotten</p>
-        <h1>Silent Explorers</h1>
-        <p class="invite">Spin the planet. Find the machines we left behind.</p>
+        <p class="eyebrow" data-i18n="brand.eyebrow">Abandoned but Not Forgotten</p>
+        <h1 data-i18n="brand.title">Silent Explorers</h1>
+        <p class="invite" data-i18n="brand.invite">Spin the planet. Find the machines we left behind.</p>
       </div>
-      <button type="button" class="progress" id="progress">
-        <span class="pips" id="pips" aria-hidden="true"></span>
-        <span class="progress-text">Found <b id="foundCount">0</b> of <span id="totalCount"></span></span>
-      </button>
+      <div class="top-side">
+        <div class="lang" role="group" aria-label="Language" data-i18n-attr="aria-label:lang.group">
+          <button type="button" lang="en" data-lang="en" aria-pressed="true" aria-label="English" title="English">EN</button>
+          <button type="button" lang="uk" data-lang="uk" aria-pressed="false" aria-label="Українська" title="Українська">УК</button>
+        </div>
+        <button type="button" class="progress" id="progress">
+          <span class="pips" id="pips" aria-hidden="true"></span>
+          <span class="progress-text" id="progressText"></span>
+        </button>
+      </div>
     </header>
 
     <div class="stage-ui">
       <div class="hint" id="hint" aria-hidden="true">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V10m0 0V8.5a1.5 1.5 0 0 1 3 0V11m0-.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-.6a6 6 0 0 1-4.9-2.5L4.3 15a1.5 1.5 0 0 1 2.4-1.8L9 15.5V11"/></svg>
-        <span>Drag to spin</span>
+        <span data-i18n="hint.drag">Drag to spin</span>
         <span class="hint-dot"></span>
-        <span>Tap a light</span>
+        <span data-i18n="hint.tap">Tap a light</span>
       </div>
       <div class="zoom">
-        <button type="button" id="zoomIn" aria-label="Zoom in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
-        <button type="button" id="zoomOut" aria-label="Zoom out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14"/></svg></button>
+        <button type="button" id="zoomIn" aria-label="Zoom in" data-i18n-attr="aria-label:zoom.in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+        <button type="button" id="zoomOut" aria-label="Zoom out" data-i18n-attr="aria-label:zoom.out"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 12h14"/></svg></button>
       </div>
     </div>
 
     <div class="dock" id="heroDock">
-      <div class="toggle" role="group" aria-label="Choose a world">
+      <div class="toggle" role="group" aria-label="Choose a world" data-i18n-attr="aria-label:world.group">
         <button type="button" class="moon-on" aria-pressed="true" data-world="moon">
           <span class="planet moon" aria-hidden="true"></span>
-          <span class="world-label">Moon <span class="world-count" data-count="moon"></span></span>
+          <span class="world-label"><span data-i18n="world.moon">Moon</span> <span class="world-count" data-count="moon"></span></span>
         </button>
         <button type="button" class="mars-on" aria-pressed="false" data-world="mars">
           <span class="planet mars" aria-hidden="true"></span>
-          <span class="world-label">Mars <span class="world-count" data-count="mars"></span></span>
+          <span class="world-label"><span data-i18n="world.mars">Mars</span> <span class="world-count" data-count="mars"></span></span>
         </button>
       </div>
-      <a class="to-collection" href="#collection">All machines
+      <a class="to-collection" href="#collection"><span data-i18n="nav.all">All machines</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
       </a>
     </div>
@@ -71,49 +77,53 @@
 
   <section class="section" id="collection" aria-labelledby="collectionTitle">
     <div class="section-head">
-      <h2 id="collectionTitle">Moon collection</h2>
+      <h2 id="collectionTitle" data-i18n="collection.title.moon">Moon collection</h2>
       <span class="count" id="collectionCount"></span>
     </div>
-    <p class="section-sub">Every card is a real machine that is still out there. Open one to hear its story.</p>
+    <p class="section-sub" data-i18n="collection.sub">Every card is a real machine that is still out there. Open one to hear its story.</p>
     <ul class="legend">
-      <li><span class="key k-new"></span>Not found yet</li>
-      <li><span class="key k-seen"></span>Visited</li>
-      <li><span class="key k-project"></span>Has a student animation, mini-game or video</li>
+      <li><span class="key k-new"></span><span data-i18n="state.new">Not found yet</span></li>
+      <li><span class="key k-seen"></span><span data-i18n="state.seen">Visited</span></li>
+      <li><span class="key k-project"></span><span data-i18n="legend.project">Has a student animation, mini-game or video</span></li>
     </ul>
     <div class="chip-row" id="chipRow"></div>
-    <p class="caption" id="stageCaption">Positions use each mission's real landing coordinates on a stylized surface.</p>
+    <p class="caption" id="stageCaption" data-i18n="collection.caption">Positions use each mission's real landing coordinates on a stylized surface.</p>
 
     <details class="about" id="about">
-      <summary>About this project and how to add your own
+      <summary><span data-i18n="about.summary">About this project and how to add your own</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
       </summary>
       <div class="about-body">
-        <p>Every glowing point on this globe is a real machine NASA (or its partners) sent to the Moon or Mars — and never brought home. Drag to look around, then tap a marker to hear its story, see its last photo, and read what it really did.</p>
+        <p data-i18n-html="about.p1">Every glowing point on this globe is a real machine NASA (or its partners) sent to the Moon or Mars — and never brought home. Drag to look around, then tap a marker to hear its story, see its last photo, and read what it really did.</p>
         <div class="badges">
-          <span class="badge">Built for ages 10–14</span>
-          <span class="badge"><span id="missionCount"></span> real missions, 1960s–2020s</span>
-          <span class="badge">Approximate real landing coordinates</span>
+          <span class="badge" data-i18n="about.badge.ages">Built for ages 10–14</span>
+          <span class="badge" id="badgeMissions"></span>
+          <span class="badge" data-i18n="about.badge.coords">Approximate real landing coordinates</span>
         </div>
-        <p><strong>About this project.</strong> Made for NASA Space Apps Challenge 2026 — "Abandoned but Not Forgotten: Storytelling about NASA's Discarded Equipment on the Moon and Mars." Dates, mission durations, and outcomes are drawn from public NASA/JPL mission records. Photos are public-domain NASA imagery. First-person narration is a storytelling device; it dramatizes real events rather than inventing new ones.</p>
-        <p>One documented myth is corrected on purpose: Opportunity's famous "my battery is low and it's getting dark" line was never an actual transmission from the rover — see its card for what was really sent.</p>
-        <p id="howTo"><strong>Student projects.</strong> Each marker can carry its own small animation, mini-game or short video, made by a different student, instead of the plain photo. Eagle, Opportunity and Perseverance's parachute already have one each as examples — every other marker is open for someone to claim. A project is just a short script following a fixed contract (an <code>init(container)</code> function that draws into a box and returns a cleanup function); a finished MP4 clip needs only a few lines. Ask a mentor to add yours once it's ready.</p>
-        <button type="button" class="link-btn muted" id="resetProgress">Reset my progress</button>
+        <p data-i18n-html="about.p2"><strong>About this project.</strong> Made for NASA Space Apps Challenge 2026 — "Abandoned but Not Forgotten: Storytelling about NASA's Discarded Equipment on the Moon and Mars." Dates, mission durations, and outcomes are drawn from public NASA/JPL mission records. Photos are public-domain NASA imagery. First-person narration is a storytelling device; it dramatizes real events rather than inventing new ones.</p>
+        <p data-i18n-html="about.p3">One documented myth is corrected on purpose: Opportunity's famous "my battery is low and it's getting dark" line was never an actual transmission from the rover — see its card for what was really sent.</p>
+        <p id="howTo" data-i18n-html="about.p4"><strong>Student projects.</strong> Each marker can carry its own small animation, mini-game or short video, made by a different student, instead of the plain photo. Eagle, Opportunity and Perseverance's parachute already have one each as examples — every other marker is open for someone to claim. A project is just a short script following a fixed contract (an <code>init(container)</code> function that draws into a box and returns a cleanup function); a finished MP4 clip needs only a few lines. Ask a mentor to add yours once it's ready.</p>
+        <button type="button" class="link-btn muted" id="resetProgress" data-i18n="about.reset">Reset my progress</button>
       </div>
     </details>
   </section>
 </main>
 
 <footer class="site">
-  <p>Silent Explorers · NASA Space Apps Challenge 2026 · Photos: NASA (public domain). Your progress is saved only in this browser.</p>
+  <p data-i18n="footer.text">Silent Explorers · NASA Space Apps Challenge 2026 · Photos: NASA (public domain). Your progress is saved only in this browser.</p>
 </footer>
 
 <div class="sr-only" id="liveRegion" aria-live="polite"></div>
 
 <div class="overlay" id="overlay"></div>
-<aside class="panel" id="panel" role="dialog" aria-modal="true" aria-label="Mission story">
+<aside class="panel" id="panel" role="dialog" aria-modal="true" aria-label="Mission story" data-i18n-attr="aria-label:panel.aria">
   <div class="panel-bar">
     <span class="panel-world" id="panelWorld"><i></i><span>Moon</span></span>
-    <button type="button" class="panel-close" id="panelClose" aria-label="Close">
+    <div class="lang lang-panel" role="group" aria-label="Language" data-i18n-attr="aria-label:lang.group">
+      <button type="button" lang="en" data-lang="en" aria-pressed="true" aria-label="English" title="English">EN</button>
+      <button type="button" lang="uk" data-lang="uk" aria-pressed="false" aria-label="Українська" title="Українська">УК</button>
+    </div>
+    <button type="button" class="panel-close" id="panelClose" aria-label="Close" data-i18n-attr="aria-label:panel.close">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
     </button>
   </div>
@@ -132,16 +142,20 @@
       <circle cx="96" cy="97" r="5" fill="#a8482a"/><circle cx="107" cy="87" r="3.5" fill="#a8482a"/>
       <g id="rewardDots"></g>
     </svg>
-    <p class="eyebrow" id="rewardCount">All found</p>
-    <h2 id="rewardTitle">Explorer badge earned</h2>
-    <p class="body">You found every silent explorer on the Moon and Mars. They are still out there — and now they are not forgotten.</p>
+    <p class="eyebrow" id="rewardCount"></p>
+    <h2 id="rewardTitle" data-i18n="reward.title">Explorer badge earned</h2>
+    <p class="body" data-i18n="reward.body">You found every silent explorer on the Moon and Mars. They are still out there — and now they are not forgotten.</p>
     <div class="reward-actions">
-      <button type="button" class="btn" id="rewardClose">Keep exploring</button>
-      <button type="button" class="link-btn muted" id="rewardReset">Start over</button>
+      <button type="button" class="btn" id="rewardClose" data-i18n="reward.keep">Keep exploring</button>
+      <button type="button" class="link-btn muted" id="rewardReset" data-i18n="reward.reset">Start over</button>
     </div>
   </div>
 </div>
 
+<!-- language support: must come before every other script -->
+<script src="js/i18n.js"></script>
+<script src="js/i18n.uk.js"></script>
+<script src="js/i18n-objects.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script src="projects/eagle.js"></script>
@@ -226,16 +240,20 @@
   var RADIUS = 1.2;
   // where the camera looks first on each world (so markers are in view right away)
   var HOME = { moon:{ lat:12, lng:10 }, mars:{ lat:6, lng:-27 } };
-  var WORLD_NAME = { moon:"Moon", mars:"Mars" };
-  var TYPE_LABEL = { animation:"Animation", game:"Mini-game", video:"Video" };
   var ALL = DATA.moon.concat(DATA.mars);
   var TOTAL = ALL.length;
+
+  // Text in the current language (js/i18n.js, js/i18n-objects.js). The English
+  // DATA above is the source; the Ukrainian text of each object lives in I18N_OBJECTS.uk.
+  function worldName(world){ return t("world." + world); }
+  function typeLabel(type){ return t("type." + (type === "game" || type === "video" ? type : "animation")); }
+  function loc(item){ return window.localizeItem(item); }
 
   var root = document.documentElement;
   var reduceMotion = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
 
   function hasProject(id){ return !!(window.STUDENT_PROJECTS && window.STUDENT_PROJECTS[id]); }
-  function shortName(item){ return item.name.split(" — ")[0]; }
+  function shortName(item){ return loc(item).short; }
   function worldOf(item){ return DATA.moon.indexOf(item) >= 0 ? "moon" : "mars"; }
 
   // ---------- progress (kept only in this browser) ----------
@@ -277,11 +295,8 @@
   var panelWorld = document.getElementById("panelWorld");
   var progressBtn = document.getElementById("progress");
   var pipsEl = document.getElementById("pips");
-  var foundCountEl = document.getElementById("foundCount");
-  // every visible total is counted from DATA, never typed by hand
-  document.getElementById("totalCount").textContent = TOTAL;
-  document.getElementById("missionCount").textContent = TOTAL;
-  document.getElementById("rewardCount").textContent = TOTAL + " of " + TOTAL + " found";
+  var progressText = document.getElementById("progressText");
+  window.I18N_ITEM_IDS = ALL.map(function(item){ return item.id; }); // for the ?i18ndebug=1 report
   (function rewardDots(){ // one dot per machine around the badge: Moon first, then Mars
     var html = "";
     ALL.forEach(function(item, i){
@@ -304,7 +319,7 @@
   // The globe fills this in. If WebGL is missing, these stay as no-ops and
   // the collection below remains a complete way to use the page.
   function noop(){}
-  var globe = { setWorld:noop, focusItem:noop, clearSelection:noop, setPanelOpen:noop, setHighlight:noop, refresh:noop, zoom:noop };
+  var globe = { setWorld:noop, focusItem:noop, clearSelection:noop, setPanelOpen:noop, setHighlight:noop, refresh:noop, relabel:noop, zoom:noop };
 
   function dismissHint(){ hint.classList.add("gone"); }
 
@@ -689,6 +704,7 @@
         markers[key].forEach(function(m){ m.dot.material.map = markerMap(m); m.dot.material.needsUpdate = true; });
       });
     };
+    globe.relabel = function(){ tipId = null; }; // the hover label is rebuilt in the new language
     globe.zoom = function(factor){
       dismissHint();
       var len = camera.position.length();
@@ -830,9 +846,9 @@
       if (tipMarker && !uiPanelOpen && !trans){
         if (tipId !== tipMarker.item.id){
           tipId = tipMarker.item.id;
-          var tag = found[tipId] ? '<span class="tip-tag seen">Visited</span>'
-            : (tipMarker.hasProject ? '<span class="tip-tag">Student project inside</span>' : '');
-          hoverTip.innerHTML = tipMarker.item.name + tag;
+          var tag = found[tipId] ? '<span class="tip-tag seen">' + t("state.seen") + '</span>'
+            : (tipMarker.hasProject ? '<span class="tip-tag">' + t("tip.project") + '</span>' : '');
+          hoverTip.innerHTML = loc(tipMarker.item).name + tag;
         }
         hoverTip.style.left = tipMarker.sx + "px";
         hoverTip.style.top = tipMarker.sy + "px";
@@ -916,10 +932,10 @@
     Array.prototype.forEach.call(chipRow.querySelectorAll(".chip"), function(b){
       var seen = !!found[b.dataset.id];
       b.classList.toggle("visited", seen);
-      b.querySelector(".card-state").textContent = seen ? "Visited" : "Not found yet";
+      b.querySelector(".card-state").textContent = t(seen ? "state.seen" : "state.new");
     });
-    document.getElementById("collectionTitle").textContent = WORLD_NAME[currentWorld] + " collection";
-    document.getElementById("collectionCount").textContent = foundIn(DATA[currentWorld]) + " of " + DATA[currentWorld].length + " found";
+    document.getElementById("collectionTitle").textContent = t("collection.title." + currentWorld);
+    document.getElementById("collectionCount").textContent = t("found.of", { n:foundIn(DATA[currentWorld]), total:DATA[currentWorld].length });
   }
 
   // The collection: one card per machine of the current world. This is the
@@ -927,16 +943,17 @@
   function buildChips(world){
     chipRow.innerHTML = "";
     DATA[world].forEach(function(item){
+      var L = loc(item);
       var b = document.createElement("button");
       b.type = "button";
       b.className = "chip " + world + "-chip";
       b.dataset.id = item.id;
       b.innerHTML =
         '<span class="card-thumb"><img src="' + item.photo + '" alt="" loading="lazy">' +
-          (hasProject(item.id) ? '<span class="card-play">' + ICON.play + '<span>Student project</span></span>' : '') +
+          (hasProject(item.id) ? '<span class="card-play">' + ICON.play + '<span>' + t("card.project") + '</span></span>' : '') +
           '<span class="card-stamp">' + ICON.check + '</span></span>' +
-        '<span class="card-body"><span class="card-name">' + item.name + '</span>' +
-          '<span class="card-kind">' + item.kind + '</span>' +
+        '<span class="card-body"><span class="card-name">' + L.name + '</span>' +
+          '<span class="card-kind">' + L.kind + '</span>' +
           '<span class="card-state"></span></span>';
       b.addEventListener("click", function(){ openPanel(world, item); });
       b.addEventListener("pointerenter", function(){ globe.setHighlight(item.id); });
@@ -963,14 +980,15 @@
       pip.classList.remove("pop");
       if (newId && pip.dataset.id === newId){ void pip.offsetWidth; pip.classList.add("pop"); }
     });
-    foundCountEl.textContent = n;
+    progressText.innerHTML = t("found.counter", { n:n, total:TOTAL });
     var complete = n === TOTAL;
     progressBtn.classList.toggle("complete", complete);
-    progressBtn.setAttribute("aria-label", "Found " + n + " of " + TOTAL + " machines. " + (complete ? "Show your explorer badge" : "Go to the list of machines"));
+    // the noun after "of" follows the total, so the plural form is chosen by it
+    progressBtn.setAttribute("aria-label", t("progress.aria", { n:n, total:TOTAL, count:TOTAL }) + " " + t(complete ? "progress.aria.badge" : "progress.aria.list"));
     ["moon","mars"].forEach(function(w){
       document.querySelector('[data-count="' + w + '"]').textContent = foundIn(DATA[w]) + " / " + DATA[w].length;
     });
-    if (newId) liveRegion.textContent = "Found " + n + " of " + TOTAL + ".";
+    if (newId) liveRegion.textContent = t("live.found", { n:n, total:TOTAL });
   }
 
   function setWorld(world){
@@ -982,16 +1000,29 @@
     globe.setWorld(world);
   }
 
-  // ---------- facts as tiles (display only: the text itself comes from DATA untouched) ----------
-  var MONTHS = "(?:January|February|March|April|May|June|July|August|September|October|November|December)";
-  var RE_DATE = new RegExp("^(" + MONTHS + " (?:\\d{1,2}, )?\\d{4})(?:,\\s+|\\s+|$)(.*)$");
-  var RE_NUM = /^((?:about\s)?~?\d[\d.,]*\+?(?:\s(?:km\/h|km|kg|m|days?|years?|months?))?(?:,\s\d+\s(?:days?|months?))?)(?:\s+—\s+|\s+|$)(.*)$/;
+  // ---------- facts as tiles (display only: the text itself comes from DATA / I18N_OBJECTS untouched) ----------
+  // Each language has its own patterns that cut the big number or date out of a fact value.
+  var UK_MONTH_GEN = "(?:січня|лютого|березня|квітня|травня|червня|липня|серпня|вересня|жовтня|листопада|грудня)";
+  var UK_MONTH_NOM = "(?:січень|лютий|березень|квітень|травень|червень|липень|серпень|вересень|жовтень|листопад|грудень)";
+  var UK_UNIT = "(?:км\\/год|км|кг|днів|дні|день|років|роки|рік|місяців|місяці|місяць|м)(?=[\\s,;.]|$)";
+  var FACT_RX = {
+    en: {
+      date: new RegExp("^((?:January|February|March|April|May|June|July|August|September|October|November|December) (?:\\d{1,2}, )?\\d{4})(?:,\\s+|\\s+|$)(.*)$"),
+      num: /^((?:about\s)?~?\d[\d.,]*\+?(?:\s(?:km\/h|km|kg|m|days?|years?|months?))?(?:,\s\d+\s(?:days?|months?))?)(?:\s+—\s+|\s+|$)(.*)$/
+    },
+    uk: {
+      date: new RegExp("^(\\d{1,2}\\s" + UK_MONTH_GEN + "\\s\\d{4}|" + UK_MONTH_NOM + "\\s\\d{4})(?:,\\s+|\\s+|$)(.*)$", "i"),
+      num: new RegExp("^((?:близько\\s)?~?\\d(?:[\\d.,]|\\u00a0(?=\\d))*\\+?(?:\\s" + UK_UNIT + ")?(?:,\\s\\d+\\s(?:днів|дні|день|місяців|місяці|місяць)(?=[\\s,;.]|$))?)(?:\\s+—\\s+|\\s+|$)(.*)$", "i")
+    }
+  };
 
+  // days in a duration like "14 years, 221 days" / "14 років, 221 день" (both languages)
   function parseDays(str){
     var days = 0, m;
-    if ((m = /([\d.]+)\s*years?/.exec(str))) days += parseFloat(m[1]) * 365.25;
-    if ((m = /([\d.]+)\s*months?/.exec(str))) days += parseFloat(m[1]) * 30.44;
-    if ((m = /([\d.]+)\s*days?/.exec(str))) days += parseFloat(m[1]);
+    str = String(str).replace(/,(\d)/g, ".$1");
+    if ((m = /([\d.]+)\s*(?:years?|рік|роки|років)(?=[\s,;.]|$)/.exec(str))) days += parseFloat(m[1]) * 365.25;
+    if ((m = /([\d.]+)\s*(?:months?|місяць|місяці|місяців)(?=[\s,;.]|$)/.exec(str))) days += parseFloat(m[1]) * 30.44;
+    if ((m = /([\d.]+)\s*(?:days?|день|дні|днів)(?=[\s,;.]|$)/.exec(str))) days += parseFloat(m[1]);
     return days;
   }
 
@@ -999,22 +1030,27 @@
     return '<div class="tile ' + cls + '"><dt>' + label + '</dt><dd>' + inner + '</dd></div>';
   }
 
-  function factTiles(facts){
+  function factTiles(item){
+    var L = loc(item), rx = FACT_RX[L.lang] || FACT_RX.en;
+    var facts = L.facts;
     var halves = [], compare = [], texts = [];
-    var planned = null, actual = null;
-    facts.forEach(function(f){
-      if (f[0] === "Planned mission") planned = f;
-      if (f[0] === "Actual mission") actual = f;
+    // "Planned mission" / "Actual mission" are recognised by the English labels (same positions in every language)
+    var pi = -1, ai = -1;
+    item.facts.forEach(function(f, i){
+      if (f[0] === "Planned mission") pi = i;
+      if (f[0] === "Actual mission") ai = i;
     });
+    var planned = pi >= 0 ? facts[pi] : null, actual = ai >= 0 ? facts[ai] : null;
     var canCompare = planned && actual && parseDays(planned[1]) > 0 && parseDays(actual[1]) > 0;
 
-    facts.forEach(function(f){
+    facts.forEach(function(f, i){
       var label = f[0], value = f[1], m;
-      if (canCompare && (f === planned || f === actual)) return;
-      if ((m = RE_NUM.exec(value))){
-        halves.push({ cls:"num", label:label, inner:'<span class="big">' + m[1] + '</span>' + (m[2] ? '<span class="rest">' + m[2] + '</span>' : '') });
-      } else if ((m = RE_DATE.exec(value))){
+      if (canCompare && (i === pi || i === ai)) return;
+      // dates first: in Ukrainian a date starts with the day number ("20 липня 1969"), which the number pattern would also take
+      if ((m = rx.date.exec(value))){
         halves.push({ cls:"date", label:label, inner:'<span class="big">' + m[1] + '</span>' + (m[2] ? '<span class="rest">' + m[2] + '</span>' : '') });
+      } else if ((m = rx.num.exec(value))){
+        halves.push({ cls:"num", label:label, inner:'<span class="big">' + m[1] + '</span>' + (m[2] ? '<span class="rest">' + m[2] + '</span>' : '') });
       } else {
         texts.push(tile("full text", label, value));
       }
@@ -1028,7 +1064,7 @@
         '<span class="big">' + planned[1] + '</span><span class="bar"><i style="width:' + Math.max(2, pd/max*100).toFixed(1) + '%"></i></span>'));
       compare.push(tile("full compare cmp-row actual", actual[0],
         '<span class="big">' + actual[1] + '</span><span class="bar"><i style="width:' + Math.max(2, ad/max*100).toFixed(1) + '%"></i></span>' +
-        (times >= 2 ? '<span class="cmp-times">About ' + times + '× longer than planned</span>' : '')));
+        (times >= 2 ? '<span class="cmp-times">' + t("cmp.times", { n:times }) + '</span>' : '')));
     }
 
     var html = "";
@@ -1053,6 +1089,71 @@
   }
 
   var nextTarget = null;
+  // what the open card shows; kept so that a language switch can redraw its texts
+  // without touching the student project that is running in #projectStage
+  var cardState = null; // { world, item, proj, isNew, newCount, failed }
+
+  function stageEmptyHtml(st){
+    var L = loc(st.item);
+    return '<div class="cta-empty"><img src="' + st.item.photo + '" alt="' + t("panel.photo.alt", { name:L.name }) + '"><span class="credit">NASA</span><button type="button" class="slot-btn" data-action="invite">' + ICON.plus + t("project.slot") + '</button></div>';
+  }
+
+  function bylineHtml(st){
+    var proj = st.proj;
+    return proj
+      ? '<div class="project-byline has-project"><span class="type">' + ICON.play + typeLabel(proj.type) + '</span><span>' + t("project.byline", { title:pick(proj.title), author:pick(proj.author) }) + '</span></div>'
+      : '<div class="project-byline">' + t("project.ref") + '</div>';
+  }
+
+  function cardContentHtml(st){
+    var item = st.item, L = loc(item), isMoon = st.world === "moon";
+    var noteHtml = L.note ? '<div class="note">' + L.note + '</div>' : '';
+    var inviteHtml = st.proj ? '' :
+      '<div class="invite-card" id="inviteCard"><span class="invite-icon">' + ICON.plus + '</span><div>' +
+        '<strong>' + t("invite.title") + '</strong>' +
+        '<p>' + t("invite.text", { name:L.short }) + '</p>' +
+        '<button type="button" class="link-btn" data-action="how">' + t("invite.how") + '</button>' +
+      '</div></div>';
+    var nextHtml = nextTarget
+      ? '<button type="button" class="next-btn" data-action="next"><span><small>' +
+          (nextTarget.world === st.world ? t("next.label") : t("next.stop", { world:worldName(nextTarget.world) })) +
+          '</small><b>' + loc(nextTarget.item).name + '</b></span>' + ICON.arrow + '</button>'
+      : '';
+    return '<div class="panel-headline"><div class="kind-row">' +
+          '<span class="panel-kind ' + (isMoon ? 'moon-on' : 'mars-on') + '">' + t(isMoon ? "panel.kind.moon" : "panel.kind.mars") + ' &middot; ' + L.kind + '</span>' +
+          (st.isNew ? '<span class="new-find">' + t("panel.new", { n:st.newCount, total:TOTAL }) + '</span>' : '') +
+        '</div><h2 class="display">' + L.name + '</h2></div>' +
+        '<div class="voice-block">' +
+          '<div class="speaker"><img class="avatar" src="' + item.photo + '" alt=""><span class="speaker-name">' + L.short + '</span>' +
+          '<span class="speaker-tag" aria-hidden="true"><i></i><i></i><i></i></span><span class="sr-only">' + t("panel.says") + '</span></div>' +
+          '<p class="voice">' + L.voice + '</p>' +
+        '</div>' +
+        '<div class="section-label">' + t("panel.log") + '</div>' +
+        '<dl class="facts">' + factTiles(item) + '</dl>' +
+        '<div class="section-label">' + t("panel.why") + '</div>' +
+        '<p class="why">' + L.why + '</p>' +
+        noteHtml + inviteHtml + nextHtml;
+  }
+
+  // Redraw the texts of the open card in the current language. The stage (the
+  // student's animation, game or video) is left alone, so nothing restarts.
+  function rerenderCard(){
+    if (!cardState || !panelOpen) return;
+    var st = cardState;
+    var content = panelBody.querySelector(".panel-content");
+    var by = panelBody.querySelector(".project-byline");
+    if (!content || !by) return;
+    content.classList.add("no-anim"); // do not replay the entrance animations
+    content.innerHTML = cardContentHtml(st);
+    by.outerHTML = bylineHtml(st);
+    var stageEl = document.getElementById("projectStage");
+    if (stageEl){
+      if (!st.proj) stageEl.innerHTML = stageEmptyHtml(st);
+      else if (st.failed){ var msg = stageEl.querySelector(".msg"); if (msg) msg.textContent = t("project.failed"); }
+    }
+    panel.setAttribute("aria-label", t("panel.aria.named", { name:loc(st.item).name }));
+    panelWorld.lastElementChild.textContent = worldName(st.world);
+  }
 
   function openPanel(world, item){
     stopActiveProject();
@@ -1070,50 +1171,17 @@
       if (foundIn(ALL) === TOTAL) pendingReward = true;
     }
 
-    var isMoon = world === "moon";
-    var noteHtml = item.note ? '<div class="note">' + item.note + '</div>' : '';
     var proj = window.STUDENT_PROJECTS && window.STUDENT_PROJECTS[item.id];
-    var stageHtml = proj
-      ? '<div class="project-stage" id="projectStage"></div>'
-      : '<div class="project-stage" id="projectStage"><div class="cta-empty"><img src="' + item.photo + '" alt="NASA photo related to ' + item.name + '"><span class="credit">NASA</span><button type="button" class="slot-btn" data-action="invite">' + ICON.plus + 'Open slot for your project</button></div></div>';
-    var bylineHtml = proj
-      ? '<div class="project-byline has-project"><span class="type">' + ICON.play + (TYPE_LABEL[proj.type] || "Animation") + '</span><span>Student project: “' + proj.title + '” by ' + proj.author + '</span></div>'
-      : '<div class="project-byline">Showing the NASA reference photo</div>';
-    var inviteHtml = proj ? '' :
-      '<div class="invite-card" id="inviteCard"><span class="invite-icon">' + ICON.plus + '</span><div>' +
-        '<strong>This spot is waiting for your project</strong>' +
-        '<p>No student project yet — this could be yours. Make a small animation, mini-game or short video about ' + shortName(item) + ', and it will play here instead of the photo.</p>' +
-        '<button type="button" class="link-btn" data-action="how">How to add yours</button>' +
-      '</div></div>';
-
     nextTarget = nextToFind(world, item);
-    var nextHtml = nextTarget
-      ? '<button type="button" class="next-btn" data-action="next"><span><small>' +
-          (nextTarget.world === world ? 'Next machine to find' : 'Next stop: ' + WORLD_NAME[nextTarget.world]) +
-          '</small><b>' + nextTarget.item.name + '</b></span>' + ICON.arrow + '</button>'
-      : '';
+    cardState = { world:world, item:item, proj:proj || null, isNew:isNew, newCount:foundIn(ALL), failed:false };
 
     panelBody.innerHTML =
-      stageHtml + bylineHtml +
-      '<div class="panel-content">' +
-        '<div class="panel-headline"><div class="kind-row">' +
-          '<span class="panel-kind ' + (isMoon ? 'moon-on' : 'mars-on') + '">' + (isMoon ? 'Lunar hardware' : 'Martian hardware') + ' &middot; ' + item.kind + '</span>' +
-          (isNew ? '<span class="new-find">New find &middot; ' + foundIn(ALL) + ' of ' + TOTAL + '</span>' : '') +
-        '</div><h2 class="display">' + item.name + '</h2></div>' +
-        '<div class="voice-block">' +
-          '<div class="speaker"><img class="avatar" src="' + item.photo + '" alt=""><span class="speaker-name">' + shortName(item) + '</span>' +
-          '<span class="speaker-tag" aria-hidden="true"><i></i><i></i><i></i></span><span class="sr-only">says:</span></div>' +
-          '<p class="voice">' + item.voice + '</p>' +
-        '</div>' +
-        '<div class="section-label">Mission log</div>' +
-        '<dl class="facts">' + factTiles(item.facts) + '</dl>' +
-        '<div class="section-label">Why it mattered</div>' +
-        '<p class="why">' + item.why + '</p>' +
-        noteHtml + inviteHtml + nextHtml +
-      '</div>';
+      '<div class="project-stage" id="projectStage">' + (proj ? '' : stageEmptyHtml(cardState)) + '</div>' +
+      bylineHtml(cardState) +
+      '<div class="panel-content">' + cardContentHtml(cardState) + '</div>';
     panelBody.scrollTop = 0;
-    panelWorld.lastElementChild.textContent = WORLD_NAME[world];
-    panel.setAttribute("aria-label", "Mission story: " + item.name);
+    panelWorld.lastElementChild.textContent = worldName(world);
+    panel.setAttribute("aria-label", t("panel.aria.named", { name:loc(item).name }));
 
     if (proj){
       var stageEl = document.getElementById("projectStage");
@@ -1121,7 +1189,8 @@
         var cleanup = proj.init(stageEl, item);
         activeCleanup = (typeof cleanup === "function") ? cleanup : null;
       } catch(err){
-        stageEl.innerHTML = '<div class="cta-empty"><span class="msg">This project failed to load</span></div>';
+        cardState.failed = true;
+        stageEl.innerHTML = '<div class="cta-empty"><span class="msg">' + t("project.failed") + '</span></div>';
       }
     }
 
@@ -1183,7 +1252,7 @@
     }
     rewardOpener = document.activeElement;
     reward.classList.add("open");
-    liveRegion.textContent = "Explorer badge earned. You found all " + TOTAL + " machines.";
+    liveRegion.textContent = t("reward.live", { total:TOTAL });
     try { document.getElementById("rewardClose").focus({ preventScroll:true }); } catch(e){ /* ignore */ }
   }
   function hideReward(){
@@ -1201,7 +1270,7 @@
     updateProgress();
     updateChipStates();
     globe.refresh();
-    liveRegion.textContent = "Progress reset.";
+    liveRegion.textContent = t("live.reset");
   }
 
   document.getElementById("rewardClose").addEventListener("click", hideReward);
@@ -1253,8 +1322,17 @@
   document.getElementById("zoomOut").addEventListener("click", function(){ globe.zoom(1.28); });
 
   // ---------- start ----------
-  buildChips("moon");
-  updateProgress();
+  // Everything that holds words and is built by script. Runs now and after each language switch.
+  function renderLang(){
+    updateProgress();
+    buildChips(currentWorld);
+    document.getElementById("badgeMissions").textContent = t("about.badge.missions", { n:TOTAL });
+    document.getElementById("rewardCount").textContent = t("found.of", { n:TOTAL, total:TOTAL });
+    rerenderCard();
+    globe.relabel();
+  }
+  renderLang();
+  onLangChange(renderLang);
   try {
     initGlobe();
   } catch(err){
