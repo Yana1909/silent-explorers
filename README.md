@@ -49,9 +49,11 @@ Then open `http://localhost:8000`.
 ## Project structure
 
 ```
-index.html            Main page: globe, panel UI, mission data
+index.html            Main page: markup, mission data, globe and panel logic
+css/styles.css        All styles (colours and fonts are CSS variables in :root)
 projects/              Student project modules (see above)
 assets/img/            NASA mission photographs (public domain)
+docs/                  Design brief and design notes
 ```
 
 ## Credits
