@@ -35,7 +35,7 @@
       </div>
       <button type="button" class="progress" id="progress">
         <span class="pips" id="pips" aria-hidden="true"></span>
-        <span class="progress-text">Found <b id="foundCount">0</b> of 8</span>
+        <span class="progress-text">Found <b id="foundCount">0</b> of <span id="totalCount"></span></span>
       </button>
     </header>
 
@@ -56,11 +56,11 @@
       <div class="toggle" role="group" aria-label="Choose a world">
         <button type="button" class="moon-on" aria-pressed="true" data-world="moon">
           <span class="planet moon" aria-hidden="true"></span>
-          <span class="world-label">Moon <span class="world-count" data-count="moon">0 / 4</span></span>
+          <span class="world-label">Moon <span class="world-count" data-count="moon"></span></span>
         </button>
         <button type="button" class="mars-on" aria-pressed="false" data-world="mars">
           <span class="planet mars" aria-hidden="true"></span>
-          <span class="world-label">Mars <span class="world-count" data-count="mars">0 / 4</span></span>
+          <span class="world-label">Mars <span class="world-count" data-count="mars"></span></span>
         </button>
       </div>
       <a class="to-collection" href="#collection">All machines
@@ -72,13 +72,13 @@
   <section class="section" id="collection" aria-labelledby="collectionTitle">
     <div class="section-head">
       <h2 id="collectionTitle">Moon collection</h2>
-      <span class="count" id="collectionCount">0 of 4 found</span>
+      <span class="count" id="collectionCount"></span>
     </div>
     <p class="section-sub">Every card is a real machine that is still out there. Open one to hear its story.</p>
     <ul class="legend">
       <li><span class="key k-new"></span>Not found yet</li>
       <li><span class="key k-seen"></span>Visited</li>
-      <li><span class="key k-project"></span>Has a student animation or mini-game</li>
+      <li><span class="key k-project"></span>Has a student animation, mini-game or video</li>
     </ul>
     <div class="chip-row" id="chipRow"></div>
     <p class="caption" id="stageCaption">Positions use each mission's real landing coordinates on a stylized surface.</p>
@@ -91,12 +91,12 @@
         <p>Every glowing point on this globe is a real machine NASA (or its partners) sent to the Moon or Mars — and never brought home. Drag to look around, then tap a marker to hear its story, see its last photo, and read what it really did.</p>
         <div class="badges">
           <span class="badge">Built for ages 10–14</span>
-          <span class="badge">8 real missions, 1960s–2020s</span>
+          <span class="badge"><span id="missionCount"></span> real missions, 1960s–2020s</span>
           <span class="badge">Approximate real landing coordinates</span>
         </div>
         <p><strong>About this project.</strong> Made for NASA Space Apps Challenge 2026 — "Abandoned but Not Forgotten: Storytelling about NASA's Discarded Equipment on the Moon and Mars." Dates, mission durations, and outcomes are drawn from public NASA/JPL mission records. Photos are public-domain NASA imagery. First-person narration is a storytelling device; it dramatizes real events rather than inventing new ones.</p>
         <p>One documented myth is corrected on purpose: Opportunity's famous "my battery is low and it's getting dark" line was never an actual transmission from the rover — see its card for what was really sent.</p>
-        <p id="howTo"><strong>Student projects.</strong> Each marker can carry its own small animation or mini-game, made by a different student, instead of the plain photo. Eagle and Opportunity already have one each as examples — every other marker is open for someone to claim. A project is just a short script following a fixed contract (an <code>init(container)</code> function that draws into a box and returns a cleanup function); ask a mentor to add yours once it's ready.</p>
+        <p id="howTo"><strong>Student projects.</strong> Each marker can carry its own small animation, mini-game or short video, made by a different student, instead of the plain photo. Eagle, Opportunity and Perseverance's parachute already have one each as examples — every other marker is open for someone to claim. A project is just a short script following a fixed contract (an <code>init(container)</code> function that draws into a box and returns a cleanup function); a finished MP4 clip needs only a few lines. Ask a mentor to add yours once it's ready.</p>
         <button type="button" class="link-btn muted" id="resetProgress">Reset my progress</button>
       </div>
     </details>
@@ -130,10 +130,9 @@
       <circle cx="57" cy="68" r="6" fill="#8d90a3"/><circle cx="72" cy="88" r="8" fill="#8d90a3"/><circle cx="76" cy="64" r="4" fill="#8d90a3"/>
       <circle cx="101" cy="92" r="19" fill="#d9693f" stroke="#0c1326" stroke-width="4"/>
       <circle cx="96" cy="97" r="5" fill="#a8482a"/><circle cx="107" cy="87" r="3.5" fill="#a8482a"/>
-      <g fill="#ecd292"><circle cx="80" cy="22" r="5"/><circle cx="121" cy="39" r="5"/><circle cx="138" cy="80" r="5"/><circle cx="121" cy="121" r="5"/></g>
-      <g fill="#ff7b4a"><circle cx="80" cy="138" r="5"/><circle cx="39" cy="121" r="5"/><circle cx="22" cy="80" r="5"/><circle cx="39" cy="39" r="5"/></g>
+      <g id="rewardDots"></g>
     </svg>
-    <p class="eyebrow">8 of 8 found</p>
+    <p class="eyebrow" id="rewardCount">All found</p>
     <h2 id="rewardTitle">Explorer badge earned</h2>
     <p class="body">You found every silent explorer on the Moon and Mars. They are still out there — and now they are not forgotten.</p>
     <div class="reward-actions">
@@ -147,6 +146,8 @@
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script src="projects/eagle.js"></script>
 <script src="projects/opportunity.js"></script>
+<script src="projects/_video.js"></script>
+<script src="projects/perseverance-debris.js"></script>
 <script>
 (function(){
   var DATA = {
@@ -209,6 +210,13 @@
         voice:"I didn't drive anywhere — my job was to listen. I set a seismometer on the Martian ground and felt the planet's pulse: over 1,300 marsquakes, including some I could trace back to meteor strikes just from the shaking. But Mars has no rain or strong wind to clear dust away, and after four years my solar panels were buried too deep in fine red dust to keep my batteries charged. My last photo, sent in December 2022, was of myself — dust and all.",
         facts:[["Landed","November 2018, Elysium Planitia"],["Operated","4 years, 1 month"],["Marsquakes detected","1,300+"],["Status","Out of power; final contact December 2022"],["Role","First mission to measure Mars's seismic activity and interior"]],
         why:"InSight revealed that Mars has a liquid core and a crust shaped by ancient impacts — the first real look inside another rocky planet besides Earth."
+      },
+      {
+        id:"perseverance-debris", name:"Perseverance's Parachute & Backshell", kind:"Landing debris",
+        lat:18.44, lng:77.45, photo:"assets/img/perseverance-debris.jpg",
+        voice:"We are the parachute and the backshell that brought the Perseverance rover to Mars. Our whole job lasted about seven minutes: on February 18, 2021, we slowed the rover's capsule down from hypersonic speed above Jezero Crater. Then, shortly before touchdown, we were cast off, and we fell the rest of the way on our own — hitting the ground at about 126 km/h. A year later, a small helicopter called Ingenuity flew over and took our picture, so engineers could learn how we came through the descent. We are still lying here, about a kilometer from where the rover touched down.",
+        facts:[["Landed","February 18, 2021, Jezero Crater"],["Parachute","21.5 m wide, the largest ever sent to Mars"],["Backshell impact","about 126 km/h"],["Photographed","April 19, 2022, by the Ingenuity helicopter (Flight 26)"],["Status","Lying on the surface about 1 km from the landing site"]],
+        why:"Ingenuity's photos show engineers how the parachute and backshell held up during the descent. That helps them design the landings of future missions — including the one meant to bring samples of Mars back to Earth."
       }
     ]
   };
@@ -219,6 +227,7 @@
   // where the camera looks first on each world (so markers are in view right away)
   var HOME = { moon:{ lat:12, lng:10 }, mars:{ lat:6, lng:-27 } };
   var WORLD_NAME = { moon:"Moon", mars:"Mars" };
+  var TYPE_LABEL = { animation:"Animation", game:"Mini-game", video:"Video" };
   var ALL = DATA.moon.concat(DATA.mars);
   var TOTAL = ALL.length;
 
@@ -269,6 +278,19 @@
   var progressBtn = document.getElementById("progress");
   var pipsEl = document.getElementById("pips");
   var foundCountEl = document.getElementById("foundCount");
+  // every visible total is counted from DATA, never typed by hand
+  document.getElementById("totalCount").textContent = TOTAL;
+  document.getElementById("missionCount").textContent = TOTAL;
+  document.getElementById("rewardCount").textContent = TOTAL + " of " + TOTAL + " found";
+  (function rewardDots(){ // one dot per machine around the badge: Moon first, then Mars
+    var html = "";
+    ALL.forEach(function(item, i){
+      var a = i / TOTAL * Math.PI * 2;
+      html += '<circle cx="' + (80 + 58 * Math.sin(a)).toFixed(1) + '" cy="' + (80 - 58 * Math.cos(a)).toFixed(1) +
+        '" r="5" fill="' + CSS_COLOR[worldOf(item)] + '"/>';
+    });
+    document.getElementById("rewardDots").innerHTML = html;
+  })();
   var liveRegion = document.getElementById("liveRegion");
   var reward = document.getElementById("reward");
   var aboutEl = document.getElementById("about");
@@ -963,7 +985,7 @@
   // ---------- facts as tiles (display only: the text itself comes from DATA untouched) ----------
   var MONTHS = "(?:January|February|March|April|May|June|July|August|September|October|November|December)";
   var RE_DATE = new RegExp("^(" + MONTHS + " (?:\\d{1,2}, )?\\d{4})(?:,\\s+|\\s+|$)(.*)$");
-  var RE_NUM = /^(~?\d[\d.,]*\+?(?:\s(?:km|kg|days?|years?|months?))?(?:,\s\d+\s(?:days?|months?))?)(?:\s+—\s+|\s+|$)(.*)$/;
+  var RE_NUM = /^((?:about\s)?~?\d[\d.,]*\+?(?:\s(?:km\/h|km|kg|m|days?|years?|months?))?(?:,\s\d+\s(?:days?|months?))?)(?:\s+—\s+|\s+|$)(.*)$/;
 
   function parseDays(str){
     var days = 0, m;
@@ -1055,12 +1077,12 @@
       ? '<div class="project-stage" id="projectStage"></div>'
       : '<div class="project-stage" id="projectStage"><div class="cta-empty"><img src="' + item.photo + '" alt="NASA photo related to ' + item.name + '"><span class="credit">NASA</span><button type="button" class="slot-btn" data-action="invite">' + ICON.plus + 'Open slot for your project</button></div></div>';
     var bylineHtml = proj
-      ? '<div class="project-byline has-project"><span class="type">' + ICON.play + (proj.type === "game" ? "Mini-game" : "Animation") + '</span><span>Student project: “' + proj.title + '” by ' + proj.author + '</span></div>'
+      ? '<div class="project-byline has-project"><span class="type">' + ICON.play + (TYPE_LABEL[proj.type] || "Animation") + '</span><span>Student project: “' + proj.title + '” by ' + proj.author + '</span></div>'
       : '<div class="project-byline">Showing the NASA reference photo</div>';
     var inviteHtml = proj ? '' :
       '<div class="invite-card" id="inviteCard"><span class="invite-icon">' + ICON.plus + '</span><div>' +
         '<strong>This spot is waiting for your project</strong>' +
-        '<p>No student project yet — this could be yours. Make a small animation or mini-game about ' + shortName(item) + ', and it will play here instead of the photo.</p>' +
+        '<p>No student project yet — this could be yours. Make a small animation, mini-game or short video about ' + shortName(item) + ', and it will play here instead of the photo.</p>' +
         '<button type="button" class="link-btn" data-action="how">How to add yours</button>' +
       '</div></div>';
 
