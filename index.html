@@ -90,7 +90,7 @@
     <p class="caption" id="stageCaption" data-i18n="collection.caption">Positions use each mission's real landing coordinates on a stylized surface.</p>
 
     <details class="about" id="about">
-      <summary><span data-i18n="about.summary">About this project and how to add your own</span>
+      <summary><span data-i18n="about.summary">About this project</span>
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
       </summary>
       <div class="about-body">
@@ -102,7 +102,6 @@
         </div>
         <p data-i18n-html="about.p2"><strong>About this project.</strong> Made for NASA Space Apps Challenge 2026 — "Abandoned but Not Forgotten: Storytelling about NASA's Discarded Equipment on the Moon and Mars." Dates, mission durations, and outcomes are drawn from public NASA/JPL mission records. Photos are public-domain NASA imagery. First-person narration is a storytelling device; it dramatizes real events rather than inventing new ones.</p>
         <p data-i18n-html="about.p3">One documented myth is corrected on purpose: Opportunity's famous "my battery is low and it's getting dark" line was never an actual transmission from the rover — see its card for what was really sent.</p>
-        <p id="howTo" data-i18n-html="about.p4"><strong>Student projects.</strong> Each marker can carry its own small animation, mini-game or short video, made by a different student, instead of the plain photo. Eagle, Opportunity and Perseverance's parachute already have one each as examples — every other marker is open for someone to claim. A project is just a short script following a fixed contract (an <code>init(container)</code> function that draws into a box and returns a cleanup function); a finished MP4 clip needs only a few lines. Ask a mentor to add yours once it's ready.</p>
         <button type="button" class="link-btn muted" id="resetProgress" data-i18n="about.reset">Reset my progress</button>
       </div>
     </details>
@@ -1112,7 +1111,6 @@
       '<div class="invite-card" id="inviteCard"><span class="invite-icon">' + ICON.plus + '</span><div>' +
         '<strong>' + t("invite.title") + '</strong>' +
         '<p>' + t("invite.text", { name:L.short }) + '</p>' +
-        '<button type="button" class="link-btn" data-action="how">' + t("invite.how") + '</button>' +
       '</div></div>';
     var nextHtml = nextTarget
       ? '<button type="button" class="next-btn" data-action="next"><span><small>' +
@@ -1228,13 +1226,6 @@
     } else if (action === "invite"){
       var card = document.getElementById("inviteCard");
       if (card) card.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block:"center" });
-    } else if (action === "how"){
-      var keepReward = pendingReward; // don't cover the instructions; show the badge on the next close
-      pendingReward = false;
-      closePanel();
-      pendingReward = keepReward;
-      aboutEl.open = true;
-      document.getElementById("howTo").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block:"center" });
     }
   });
 
