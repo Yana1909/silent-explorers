@@ -13,7 +13,7 @@
       alt: "What the poster shows"              // optional description of the poster (string or { en, uk })
     });
 
-  It registers a normal STUDENT_PROJECTS entry (see eagle.js for the contract)
+  It registers a normal STUDENT_PROJECTS entry (see _template.js for the contract)
   with type "video". Nothing plays until the viewer presses the button; then
   the clip starts with sound. Portrait clips are shown whole, with a blurred
   copy of the poster filling the sides. Styles: css/styles.css, ".video-project".

@@ -8,7 +8,7 @@ Drag the globe, switch between Moon and Mars, and tap a marker to open a card: a
 
 Each marker is also a slot for a short animation, mini-game or video made by a student, which replaces the static photo when attached. Three examples ship with the project:
 
-- **Eagle** (`projects/eagle.js`) — a looping canvas animation of the Apollo 11 descent and landing.
+- **Eagle** (`projects/eagle.js`) — a 30-second animated reconstruction of the Apollo 11 landing (video).
 - **Opportunity** (`projects/opportunity.js`) — "Пилова буря", a mini-game about surviving a Martian dust storm.
 - **Perseverance's Parachute & Backshell** (`projects/perseverance-debris.js`) — "Seven Minutes to Mars" / "Сім хвилин до Марса", a video clip (artist's reconstruction, not NASA footage).
 
