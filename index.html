@@ -207,7 +207,7 @@
       {
         id:"spirit", name:"Spirit", kind:"Rover",
         lat:-14.57, lng:175.47, photo:"assets/img/spirit.jpg",
-        voice:"Opportunity and I were twins, built side by side, landed three weeks apart in January 2004. I found signs of an ancient hot spring or steam vent, and of a violent explosion long ago — a wetter, more active Mars than the one we see today. In 2009 my wheels broke through a crust into soft sand I couldn't climb out of. I kept working anyway, stuck and unable to tilt my panels toward the winter Sun, until the cold of a Martian winter overwhelmed my heaters for good.",
+        voice:"Opportunity and I were twins, built side by side, landed three weeks apart in January 2004. I found signs of an ancient hot spring or steam vent, and of a violent explosion long ago — a wetter, more active Mars than the one we see today. In 2009 I broke through a crust into soft sand I couldn't climb out of. I kept working anyway, stuck and unable to tilt my panels toward the winter Sun, until the cold of a Martian winter overwhelmed my heaters for good.",
         facts:[["Landed","January 2004, Gusev Crater"],["Planned mission","About 3 months (90 sols)"],["Actual mission","6 years, 2 months"],["Status","Stuck in soft sand since 2009; last contact March 22, 2010"],["Role","Found signs of ancient hot springs or steam vents and of a violent ancient explosion"]],
         why:"Spirit found signs that parts of ancient Mars had hot water or steam — a wetter, more active world than the Mars we see today."
       },
@@ -1061,7 +1061,8 @@
       var max = Math.max(pd, ad);
       var times = Math.round(ad / pd);
       compare.push(tile("full compare cmp-row planned", planned[0],
-        '<span class="big">' + planned[1] + '</span><span class="bar"><i style="width:' + Math.max(2, pd/max*100).toFixed(1) + '%"></i></span>'));
+        '<span class="big">' + planned[1] + '</span><span class="bar"><i style="width:' + Math.max(2, pd/max*100).toFixed(1) + '%"></i></span>' +
+        (/\bsols?\b|сол/i.test(planned[1]) ? '<span class="cmp-term">' + t("term.sol") + '</span>' : '')));
       compare.push(tile("full compare cmp-row actual", actual[0],
         '<span class="big">' + actual[1] + '</span><span class="bar"><i style="width:' + Math.max(2, ad/max*100).toFixed(1) + '%"></i></span>' +
         (times >= 2 ? '<span class="cmp-times">' + t("cmp.times", { n:times }) + '</span>' : '')));

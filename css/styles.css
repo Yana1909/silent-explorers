@@ -694,3 +694,4 @@ footer.site{max-width:1120px; margin:0 auto; padding:22px var(--gutter) 40px; co
 @media (prefers-reduced-motion: reduce){
   .cm-page{transition:none;}
 }
+.cmp-term{display:block; margin-top:10px; font-size:13px; line-height:1.45; font-weight:400; color:var(--ink-dim);}
