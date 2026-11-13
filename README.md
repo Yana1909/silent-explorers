@@ -31,7 +31,7 @@ window.STUDENT_PROJECTS['<location id>'] = {
 };
 ```
 
-Location ids: `eagle`, `lunokhod2`, `lrv17`, `surveyor3`, `opportunity`, `spirit`, `viking1`, `insight`, `perseverance-debris`, `mer`.
+Location ids: `eagle`, `lunokhod2`, `lrv17`, `surveyor3`, `opportunity`, `spirit`, `viking1`, `insight`, `perseverance-debris`, `mer`, `apollo15`, `pathfinder`.
 
 #### An animation or a mini-game
 
@@ -81,7 +81,7 @@ How it is built (plain JavaScript, no libraries, no build step; all files are lo
 
 - `js/i18n.js` — the engine and the English interface strings (`window.I18N.en`): `t(key, params)`, `pick(value)`, `onLangChange(fn)`, `getLang()`, `setLang()`, `addStrings()`, `localizeItem()`.
 - `js/i18n.uk.js` — the Ukrainian interface strings (same keys).
-- `js/i18n-objects.js` — the Ukrainian texts of the ten objects (name, kind, first-person story, facts, "why it mattered", note) plus the translation glossary. The English originals stay in `DATA` in `index.html`.
+- `js/i18n-objects.js` — the Ukrainian texts of the twelve objects (name, kind, first-person story, facts, "why it mattered", note) plus the translation glossary. The English originals stay in `DATA` in `index.html`.
 
 ### Add or change an interface string
 
@@ -118,7 +118,7 @@ css/styles.css        All styles (colours and fonts are CSS variables in :root)
 js/                    Language support (see "Language")
   i18n.js              Engine + English interface strings: t(), pick(), onLangChange()
   i18n.uk.js           Ukrainian interface strings
-  i18n-objects.js      Ukrainian texts of the ten objects + translation glossary
+  i18n-objects.js      Ukrainian texts of the twelve objects + translation glossary
 projects/              Student project modules (see above)
   _template.js         Starter for a canvas animation or mini-game
   _video.js            Shared helper for video projects (createVideoProject)
