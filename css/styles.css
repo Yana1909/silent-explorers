@@ -655,3 +655,42 @@ footer.site{max-width:1120px; margin:0 auto; padding:22px var(--gutter) 40px; co
   html{scroll-behavior:auto;}
   *, *::before, *::after{animation:none !important; transition-duration:.01ms !important;}
 }
+
+/* student comic book (projects/surveyor3.js): pages turn around the left edge like a real book */
+.comic{display:flex; flex-direction:column; align-items:center; gap:10px; padding:12px 12px 10px; background:var(--bg);}
+.cm-book{
+  position:relative; width:min(100%, calc(68svh * .746)); aspect-ratio:1000 / 1340; perspective:2200px; overflow:hidden;
+  border-radius:6px; background:var(--surface-2); touch-action:pan-y pinch-zoom; user-select:none; -webkit-user-select:none;
+}
+.cm-book:focus-visible{outline:3px solid var(--signal); outline-offset:3px;}
+.cm-page{
+  position:absolute; inset:0; transform-origin:left center; transform-style:preserve-3d;
+  transition:transform .85s cubic-bezier(.45,.05,.25,1), box-shadow .85s;
+}
+.cm-page.is-flipped{transform:rotateY(-180deg); box-shadow:0 0 30px rgba(0,0,0,.55);}
+.cm-face{position:absolute; inset:0; backface-visibility:hidden; -webkit-backface-visibility:hidden; overflow:hidden;}
+.cm-front img{width:100%; height:100%; object-fit:cover; display:block; pointer-events:none;}
+.cm-back{transform:rotateY(180deg); background:linear-gradient(90deg, #cdbfa0, #e7dcc2 14%, #e7dcc2);}
+.cm-err{
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:max-content; max-width:80%;
+  font-size:15px; font-weight:600; color:var(--ink); background:rgba(5,8,18,.82);
+  padding:10px 16px; border-radius:12px; border:1px solid var(--line); text-align:center;
+}
+.cm-err[hidden]{display:none;}
+.cm-bar{display:flex; align-items:center; justify-content:center; gap:18px;}
+.cm-btn{
+  appearance:none; width:48px; height:48px; border-radius:50%; border:2px solid var(--line); background:var(--surface-2);
+  color:var(--ink); cursor:pointer; display:grid; place-items:center;
+  transition:transform .15s var(--ease), background .2s, opacity .2s;
+}
+.cm-btn svg{width:24px; height:24px;}
+.cm-btn:hover:not(:disabled){background:rgba(var(--signal-rgb), .16); border-color:var(--signal);}
+.cm-btn:active:not(:disabled){transform:scale(.92);}
+.cm-btn:disabled{opacity:.35; cursor:default;}
+.cm-btn:focus-visible{outline:3px solid var(--signal); outline-offset:2px;}
+.cm-count{min-width:64px; text-align:center; font-weight:700; font-size:15px; color:var(--ink); font-variant-numeric:tabular-nums;}
+.cm-note{margin:0; font-size:12.5px; line-height:1.4; color:var(--ink-dim); text-align:center;}
+.cm-sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap;}
+@media (prefers-reduced-motion: reduce){
+  .cm-page{transition:none;}
+}
