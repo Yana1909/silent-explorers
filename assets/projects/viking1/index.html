@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viking 1: 50 Years on Mars</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tone.js for synthesized cosmic robot sound effects -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+    <!-- Google Fonts: Fredoka & Nunito for friendly kid-oriented typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: #0B0F29;
+            color: #FFF8F0;
+            overflow-x: hidden;
+        }
+        h1, h2, h3, h4, .font-display {
+            font-family: 'Fredoka', sans-serif;
+        }
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(1.5deg); }
+        }
+        @keyframes pulseGlow {
+            0%, 100% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.25); opacity: 0.35; }
+        }
+        @keyframes blinkEyes {
+            0%, 92%, 100% { transform: scaleY(1); }
+            95% { transform: scaleY(0.1); }
+        }
+        @keyframes waveAntenna {
+            0%, 100% { transform: rotate(-4deg); }
+            50% { transform: rotate(6deg); }
+        }
+        .robot-float {
+            animation: floatSlow 4s ease-in-out infinite;
+        }
+        .hotspot-ping {
+            animation: pulseGlow 1.8s infinite ease-in-out;
+        }
+        .robot-eye {
+            transform-origin: center;
+            animation: blinkEyes 4.5s infinite;
+        }
+        .robot-dish {
+            transform-origin: 180px 85px;
+            animation: waveAntenna 3.2s ease-in-out infinite;
+        }
+        .btn-3d {
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            box-shadow: 0 5px 0 rgba(0, 0, 0, 0.35);
+        }
+        .btn-3d:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 rgba(0, 0, 0, 0.35);
+        }
+        #robo-arm-group {
+            transform-origin: 145px 140px;
+            transition: transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .diploma-border {
+            background: linear-gradient(135deg, #FFFDF7 0%, #FFE8CE 100%);
+            border: 8px double #E85D3F;
+            box-shadow: 0 20px 50px rgba(232, 93, 63, 0.35);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-amber-400 selection:text-slate-900">
+
+    <!-- Twinkling Starfield Background -->
+    <div id="stars-container" class="fixed inset-0 pointer-events-none z-0 opacity-75"></div>
+
+    <!-- ========================================================= -->
+    <!-- STICKY TOP PRESENTATION NAVIGATION BAR (5 CHAPTERS)         -->
+    <!-- ========================================================= -->
+    <header class="sticky top-0 z-40 bg-[#0B0F29]/95 backdrop-blur-md border-b-2 border-[#E85D3F]/50 shadow-lg">
+        <div class="max-w-6xl mx-auto px-3 py-2.5 flex flex-wrap items-center justify-between gap-2">
+            <!-- Mission Brand Badge -->
+            <button onclick="scrollToSection('hero')" class="flex items-center gap-2 text-left group cursor-pointer">
+                <span class="text-2xl sm:text-3xl">🚀</span>
+                <div>
+                    <div class="font-display font-bold text-base sm:text-lg text-[#FFB74D] leading-tight">
+                        VIKING-1 • 50 YEARS ON MARS
+                    </div>
+                    <div class="text-[11px] font-bold text-[#4FC3F7] tracking-wide">
+                        Silent Explorers • Interactive story
+                    </div>
+                </div>
+            </button>
+
+            <!-- 5 Chapter Presentation Jump Buttons -->
+            <nav class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                <button onclick="scrollToSection('hero')" class="px-2.5 py-1.5 rounded-xl bg-white/10 hover:bg-[#E85D3F] text-xs sm:text-sm font-extrabold transition cursor-pointer">
+                    1. Hello!
+                </button>
+                <button onclick="scrollToSection('timeline')" class="px-2.5 py-1.5 rounded-xl bg-white/10 hover:bg-[#E85D3F] text-xs sm:text-sm font-extrabold transition cursor-pointer">
+                    2. Journey
+                </button>
+                <button onclick="scrollToSection('xray')" class="px-2.5 py-1.5 rounded-xl bg-white/10 hover:bg-[#E85D3F] text-xs sm:text-sm font-extrabold transition cursor-pointer">
+                    3. My Body
+                </button>
+                <button onclick="scrollToSection('game')" class="px-2.5 py-1.5 rounded-xl bg-white/10 hover:bg-[#E85D3F] text-xs sm:text-sm font-extrabold transition cursor-pointer">
+                    4. Soil Lab
+                </button>
+                <button onclick="scrollToSection('quiz')" class="px-2.5 py-1.5 rounded-xl bg-white/10 hover:bg-[#E85D3F] text-xs sm:text-sm font-extrabold transition cursor-pointer">
+                    5. Quiz & Diploma
+                </button>
+                <button id="sound-toggle-btn" onclick="toggleSound()" title="Mute or unmute robot sound effects" class="px-3 py-1.5 rounded-xl bg-[#4FC3F7]/20 border border-[#4FC3F7]/50 text-[#4FC3F7] text-xs sm:text-sm font-extrabold hover:bg-[#4FC3F7]/30 transition cursor-pointer">
+                    <span id="sound-icon">🔊</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="relative z-10 flex-grow">
+
+        <!-- ========================================================= -->
+        <!-- SECTION 1: HELLO FROM MARS! (HERO)                        -->
+        <!-- ========================================================= -->
+        <section id="hero" class="py-10 sm:py-16 px-4 max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                
+                <!-- First-Person Story Column (7 cols) -->
+                <div class="lg:col-span-7 space-y-5 text-center lg:text-left">
+                    <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#E85D3F]/25 border border-[#E85D3F] text-[#FFB74D] font-extrabold text-sm">
+                        <span>From the Golden Plain of Mars</span>
+                    </div>
+
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight text-white">
+                        Hello, Earthlings! I'm <span class="text-[#FFB74D]">Viking 1</span>!
+                    </h1>
+
+                    <!-- Robot Speech Bubble -->
+                    <div class="bg-[#161D42]/90 border-2 border-[#4FC3F7]/50 rounded-3xl p-5 sm:p-6 shadow-xl relative">
+                        <p id="hero-speech" class="text-lg sm:text-xl text-orange-50 font-bold leading-relaxed">
+                            "Beep-boop! Hello, Earthlings! I'm Viking 1. NASA calls me the first successful lander on Mars. I touched down in 1976, and fifty years later I'm still on the Golden Plain. Ready to hear my story?"
+                        </p>
+                    </div>
+
+                    <!-- Interactive Action Buttons -->
+                    <div class="flex flex-wrap justify-center lg:justify-start gap-4 pt-2">
+                        <button onclick="robotBeepTalk()" class="btn-3d px-6 py-4 rounded-2xl bg-[#4FC3F7] hover:bg-sky-300 text-slate-950 font-black text-base sm:text-lg flex items-center gap-2 cursor-pointer">
+                            <span>🔊 Robot Signal (Beep-Boop!)</span>
+                        </button>
+                        <button onclick="startAdventure()" class="btn-3d px-7 py-4 rounded-2xl bg-gradient-to-r from-[#E85D3F] to-[#FFB74D] hover:brightness-110 text-slate-950 font-black text-base sm:text-lg flex items-center gap-2 cursor-pointer">
+                            <span>Start Mars Adventure 🚀</span>
+                        </button>
+                    </div>
+
+                    <!-- Kid-Friendly Quick Mission Stats -->
+                    <div class="grid grid-cols-3 gap-3 pt-4">
+                        <div class="bg-white/5 border border-white/10 rounded-2xl p-3 text-center">
+                            <div class="text-2xl sm:text-3xl font-black text-[#FFB74D]">1976</div>
+                            <div class="text-xs sm:text-sm font-bold text-sky-200">First Successful Lander</div>
+                        </div>
+                        <div class="bg-white/5 border border-white/10 rounded-2xl p-3 text-center">
+                            <div class="text-2xl sm:text-3xl font-black text-[#4FC3F7]">6+ Years</div>
+                            <div class="text-xs sm:text-sm font-bold text-sky-200">Active on Mars</div>
+                        </div>
+                        <div class="bg-white/5 border border-white/10 rounded-2xl p-3 text-center">
+                            <div class="text-2xl sm:text-3xl font-black text-[#26A69A]">90 days</div>
+                            <div class="text-xs sm:text-sm font-bold text-sky-200">Planned Mission</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Friendly Animated Inline SVG Viking-1 Character (5 cols) -->
+                <div class="lg:col-span-5 flex justify-center">
+                    <div class="relative w-full max-w-md">
+                        <!-- Cosmic Backlight Glow -->
+                        <div class="absolute inset-4 bg-gradient-to-tr from-[#E85D3F]/40 via-[#FFB74D]/25 to-[#4FC3F7]/30 rounded-full blur-2xl"></div>
+                        
+                        <svg viewBox="0 0 360 340" class="w-full h-auto relative z-10 robot-float drop-shadow-2xl">
+                            <!-- Martian Hill -->
+                            <ellipse cx="180" cy="305" rx="165" ry="26" fill="#B84327" />
+                            <ellipse cx="180" cy="300" rx="140" ry="18" fill="#E85D3F" />
+
+                            <!-- 3 Lander Legs -->
+                            <!-- Left Leg -->
+                            <line x1="115" y1="215" x2="72" y2="288" stroke="#94A3B8" stroke-width="10" stroke-linecap="round"/>
+                            <line x1="130" y1="225" x2="78" y2="288" stroke="#CBD5E1" stroke-width="6" stroke-linecap="round"/>
+                            <ellipse cx="72" cy="292" rx="22" ry="7" fill="#FFB74D" stroke="#0B0F29" stroke-width="3"/>
+
+                            <!-- Right Leg -->
+                            <line x1="245" y1="215" x2="288" y2="288" stroke="#94A3B8" stroke-width="10" stroke-linecap="round"/>
+                            <line x1="230" y1="225" x2="282" y2="288" stroke="#CBD5E1" stroke-width="6" stroke-linecap="round"/>
+                            <ellipse cx="288" cy="292" rx="22" ry="7" fill="#FFB74D" stroke="#0B0F29" stroke-width="3"/>
+
+                            <!-- Center Leg -->
+                            <line x1="180" y1="225" x2="180" y2="296" stroke="#64748B" stroke-width="10" stroke-linecap="round"/>
+                            <ellipse cx="180" cy="300" rx="24" ry="7" fill="#FFB74D" stroke="#0B0F29" stroke-width="3"/>
+
+                            <!-- High-Gain Dish Antenna (Animated Wave) -->
+                            <g class="robot-dish">
+                                <line x1="180" y1="130" x2="180" y2="75" stroke="#E2E8F0" stroke-width="7" stroke-linecap="round"/>
+                                <path d="M135,62 Q180,98 225,62" fill="#F8FAFC" stroke="#4FC3F7" stroke-width="5" stroke-linecap="round"/>
+                                <line x1="180" y1="78" x2="180" y2="45" stroke="#4FC3F7" stroke-width="4" stroke-linecap="round"/>
+                                <circle cx="180" cy="42" r="7" fill="#FFB74D"/>
+                            </g>
+
+                            <!-- Hexagonal Main Lander Body -->
+                            <polygon points="105,145 255,145 278,185 255,225 105,225 82,185" fill="#F8FAFC" stroke="#1E293B" stroke-width="5" stroke-linejoin="round"/>
+                            <!-- Golden Thermal Foil Panel -->
+                            <rect x="122" y="160" width="116" height="50" rx="14" fill="#FFB74D" stroke="#E85D3F" stroke-width="3"/>
+                            
+                            <!-- Friendly Smile -->
+                            <path d="M158,188 Q180,204 202,188" fill="none" stroke="#0B0F29" stroke-width="4.5" stroke-linecap="round"/>
+                            <!-- Rosy Cheeks -->
+                            <circle cx="145" cy="186" r="6" fill="#E85D3F" opacity="0.6"/>
+                            <circle cx="215" cy="186" r="6" fill="#E85D3F" opacity="0.6"/>
+
+                            <!-- Twin Stereo Facsimile Camera Eyes -->
+                            <!-- Left Camera Eye -->
+                            <g class="robot-eye">
+                                <rect x="124" y="102" width="34" height="42" rx="10" fill="#E2E8F0" stroke="#1E293B" stroke-width="4"/>
+                                <circle cx="141" cy="122" r="12" fill="#0B0F29"/>
+                                <circle cx="141" cy="122" r="7" fill="#4FC3F7"/>
+                                <circle cx="144" cy="119" r="3" fill="#FFFFFF"/>
+                            </g>
+
+                            <!-- Right Camera Eye -->
+                            <g class="robot-eye">
+                                <rect x="202" y="102" width="34" height="42" rx="10" fill="#E2E8F0" stroke="#1E293B" stroke-width="4"/>
+                                <circle cx="219" cy="122" r="12" fill="#0B0F29"/>
+                                <circle cx="219" cy="122" r="7" fill="#4FC3F7"/>
+                                <circle cx="222" cy="119" r="3" fill="#FFFFFF"/>
+                            </g>
+
+                            <!-- Articulated Robotic Soil-Scooping Arm -->
+                            <path d="M262,180 L312,148 L328,162" fill="none" stroke="#CBD5E1" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="330" cy="164" r="9" fill="#E85D3F" stroke="#FFF8F0" stroke-width="3"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ========================================================= -->
+        <!-- SECTION 2: MY SPACE JOURNEY (1975–1982 TIMELINE)          -->
+        <!-- ========================================================= -->
+        <section id="timeline" class="py-16 px-4 max-w-6xl mx-auto">
+            <div class="text-center max-w-3xl mx-auto mb-10">
+                <span class="bg-[#4FC3F7]/20 text-[#4FC3F7] border border-[#4FC3F7]/40 px-4 py-1 rounded-full text-sm font-extrabold">
+                    CHAPTER 2 • MISSION HISTORY
+                </span>
+                <h2 class="text-3xl sm:text-4xl font-bold text-white mt-3">
+                    My Space Journey (1975–1982)
+                </h2>
+                <p class="text-orange-100/90 text-base sm:text-lg mt-2 font-semibold">
+                    Tap each milestone card below to follow my trip from Earth to Mars!
+                </p>
+            </div>
+
+            <!-- 5 Clickable Milestone Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-8">
+                <button onclick="selectTimeline(0)" id="tl-btn-0" class="tl-card text-left p-4 rounded-3xl border-4 border-[#FFB74D] bg-gradient-to-b from-[#E85D3F]/40 to-[#161D42] shadow-xl transition transform hover:-translate-y-1 cursor-pointer">
+                    <div class="text-3xl mb-2">🔥</div>
+                    <div class="text-xs font-black text-[#FFB74D] uppercase">Aug 20, 1975</div>
+                    <div class="text-base sm:text-lg font-extrabold text-white mt-1">1. Blast Off!</div>
+                </button>
+
+                <button onclick="selectTimeline(1)" id="tl-btn-1" class="tl-card text-left p-4 rounded-3xl border-2 border-white/15 bg-[#161D42]/80 hover:border-[#4FC3F7] shadow-lg transition transform hover:-translate-y-1 cursor-pointer">
+                    <div class="text-3xl mb-2">🛸</div>
+                    <div class="text-xs font-black text-[#4FC3F7] uppercase">Jun 19, 1976</div>
+                    <div class="text-base sm:text-lg font-extrabold text-white mt-1">2. Mars Orbit!</div>
+                </button>
+
+                <button onclick="selectTimeline(2)" id="tl-btn-2" class="tl-card text-left p-4 rounded-3xl border-2 border-white/15 bg-[#161D42]/80 hover:border-[#4FC3F7] shadow-lg transition transform hover:-translate-y-1 cursor-pointer">
+                    <div class="text-3xl mb-2">🪂</div>
+                    <div class="text-xs font-black text-[#26A69A] uppercase">Jul 20, 1976</div>
+                    <div class="text-base sm:text-lg font-extrabold text-white mt-1">3. Touchdown!</div>
+                </button>
+
+                <button onclick="selectTimeline(3)" id="tl-btn-3" class="tl-card text-left p-4 rounded-3xl border-2 border-white/15 bg-[#161D42]/80 hover:border-[#4FC3F7] shadow-lg transition transform hover:-translate-y-1 cursor-pointer">
+                    <div class="text-3xl mb-2">🦾</div>
+                    <div class="text-xs font-black text-purple-300 uppercase">Jul 28, 1976</div>
+                    <div class="text-base sm:text-lg font-extrabold text-white mt-1">4. First Soil Scoop!</div>
+                </button>
+
+                <button onclick="selectTimeline(4)" id="tl-btn-4" class="tl-card text-left p-4 rounded-3xl border-2 border-white/15 bg-[#161D42]/80 hover:border-[#4FC3F7] shadow-lg transition transform hover:-translate-y-1 cursor-pointer">
+                    <div class="text-3xl mb-2">🏛️</div>
+                    <div class="text-xs font-black text-amber-300 uppercase">1981–1982</div>
+                    <div class="text-base sm:text-lg font-extrabold text-white mt-1">5. Sleeping Hero!</div>
+                </button>
+            </div>
+
+            <!-- Big Kid-Friendly Story Panel -->
+            <div id="timeline-detail" class="bg-[#161D42] border-2 border-[#FFB74D]/60 rounded-3xl p-6 sm:p-8 shadow-2xl flex flex-col md:flex-row items-center gap-6">
+                <div id="tl-emoji" class="text-6xl sm:text-7xl bg-white/10 p-6 rounded-3xl shrink-0">🔥</div>
+                <div class="space-y-3 text-center md:text-left">
+                    <div id="tl-date" class="inline-block bg-[#E85D3F] text-white text-xs sm:text-sm font-black px-3 py-1 rounded-full">
+                        August 20, 1975 • Cape Canaveral, Florida
+                    </div>
+                    <h3 id="tl-title" class="text-2xl sm:text-3xl font-bold text-white">
+                        Blast Off on Titan IIIE-Centaur!
+                    </h3>
+                    <p id="tl-story" class="text-orange-50 text-base sm:text-lg font-semibold leading-relaxed">
+                        Together with my twin Orbiter partner, I weighed about 3,500 kilograms when fully fueled. A Titan IIIE-Centaur rocket launched us from Cape Canaveral, Florida, and we headed for Mars.
+                    </p>
+                    <div id="tl-fact" class="bg-white/5 border border-white/10 rounded-2xl p-3 text-sm text-[#4FC3F7] font-bold">
+                        💡 Fun Fact: I have a twin! Viking 2 landed on Mars on September 3, 1976, at Utopia Planitia.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ========================================================= -->
+        <!-- SECTION 3: INSIDE MY BODY: ROBOT X-RAY (SVG BLUEPRINT)    -->
+        <!-- ========================================================= -->
+        <section id="xray" class="py-16 px-4 bg-[#0E1333] border-y-2 border-[#E85D3F]/30">
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center max-w-3xl mx-auto mb-10">
+                    <span class="bg-[#E85D3F]/25 text-[#FFB74D] border border-[#E85D3F] px-4 py-1 rounded-full text-sm font-extrabold">
+                        CHAPTER 3 • INTERACTIVE BLUEPRINT
+                    </span>
+                    <h2 class="text-3xl sm:text-4xl font-bold text-white mt-3">
+                        Inside My Body: Robot X-Ray
+                    </h2>
+                    <p class="text-orange-100/90 text-base sm:text-lg mt-2 font-semibold">
+                        I'm a robot science laboratory on three legs! Tap any glowing numbered pin to inspect my gadgets.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                    
+                    <!-- Pure Inline SVG Technical-Yet-Friendly Diagram with 5 Pulsing Pins -->
+                    <div class="lg:col-span-7 bg-[#151C42] border-2 border-[#4FC3F7]/40 rounded-3xl p-4 sm:p-6 shadow-2xl relative">
+                        <div class="text-xs font-extrabold text-[#4FC3F7] mb-2 flex justify-between items-center">
+                            <span>⚙️ NASA ENGINEERING X-RAY: VIKING LANDER 1</span>
+                            <span class="text-[#FFB74D]">Tap a glowing pin 👇</span>
+                        </div>
+
+                        <svg viewBox="0 0 500 380" class="w-full h-auto">
+                            <!-- Blueprint Grid -->
+                            <defs>
+                                <pattern id="grid" width="25" height="25" patternUnits="userSpaceOnUse">
+                                    <path d="M 25 0 L 0 0 0 25" fill="none" stroke="#4FC3F7" stroke-width="0.5" opacity="0.18"/>
+                                </pattern>
+                            </defs>
+                            <rect width="500" height="380" rx="16" fill="url(#grid)" />
+
+                            <!-- Martian Ground Line -->
+                            <line x1="20" y1="340" x2="480" y2="340" stroke="#E85D3F" stroke-width="4" stroke-dasharray="10 6"/>
+
+                            <!-- Lander Legs -->
+                            <line x1="150" y1="240" x2="95" y2="335" stroke="#94A3B8" stroke-width="10" stroke-linecap="round"/>
+                            <ellipse cx="95" cy="338" rx="25" ry="6" fill="#FFB74D"/>
+                            <line x1="350" y1="240" x2="405" y2="335" stroke="#94A3B8" stroke-width="10" stroke-linecap="round"/>
+                            <ellipse cx="405" cy="338" rx="25" ry="6" fill="#FFB74D"/>
+                            <line x1="250" y1="245" x2="250" y2="335" stroke="#64748B" stroke-width="10" stroke-linecap="round"/>
+                            <ellipse cx="250" cy="338" rx="25" ry="6" fill="#FFB74D"/>
+
+                            <!-- Main Chassis -->
+                            <polygon points="135,165 365,165 395,210 365,250 135,250 105,210" fill="#1E293B" stroke="#4FC3F7" stroke-width="3"/>
+                            
+                            <!-- S-Band Dish Antenna -->
+                            <line x1="250" y1="165" x2="250" y2="95" stroke="#E2E8F0" stroke-width="6"/>
+                            <path d="M195,82 Q250,122 305,82" fill="none" stroke="#F8FAFC" stroke-width="5" stroke-linecap="round"/>
+
+                            <!-- 1. Twin Facsimile Cameras -->
+                            <rect x="175" y="122" width="26" height="43" rx="6" fill="#4FC3F7"/>
+                            <rect x="295" y="122" width="26" height="43" rx="6" fill="#4FC3F7"/>
+
+                            <!-- 2. Meteorology Boom -->
+                            <line x1="375" y1="185" x2="435" y2="115" stroke="#A78BFA" stroke-width="6" stroke-linecap="round"/>
+                            <circle cx="435" cy="115" r="10" fill="#A78BFA"/>
+
+                            <!-- 3. Biology Lab & GCMS -->
+                            <rect x="215" y="182" width="70" height="52" rx="10" fill="#26A69A" opacity="0.9" stroke="#FFF" stroke-width="2"/>
+
+                            <!-- 4. Twin RTG Nuclear Batteries -->
+                            <rect x="122" y="185" width="55" height="42" rx="8" fill="#FFB74D" stroke="#FFF" stroke-width="2"/>
+
+                            <!-- 5. Surface Sampler Arm -->
+                            <polyline points="340,235 420,275 455,305" fill="none" stroke="#E85D3F" stroke-width="9" stroke-linecap="round"/>
+
+                            <!-- INTERACTIVE HOTSPOT PINS (1 to 5) -->
+                            <!-- Pin 1: Twin Facsimile Cameras -->
+                            <g onclick="selectPart(0)" class="cursor-pointer">
+                                <circle cx="188" cy="135" r="22" fill="#4FC3F7" class="hotspot-ping"/>
+                                <circle cx="188" cy="135" r="15" fill="#4FC3F7" stroke="#FFFFFF" stroke-width="3"/>
+                                <text x="188" y="140" text-anchor="middle" fill="#0B0F29" font-weight="900" font-size="14">1</text>
+                            </g>
+
+                            <!-- Pin 2: Meteorology Boom -->
+                            <g onclick="selectPart(1)" class="cursor-pointer">
+                                <circle cx="435" cy="115" r="22" fill="#A78BFA" class="hotspot-ping"/>
+                                <circle cx="435" cy="115" r="15" fill="#A78BFA" stroke="#FFFFFF" stroke-width="3"/>
+                                <text x="435" y="120" text-anchor="middle" fill="#0B0F29" font-weight="900" font-size="14">2</text>
+                            </g>
+
+                            <!-- Pin 3: Biology Lab & GCMS -->
+                            <g onclick="selectPart(2)" class="cursor-pointer">
+                                <circle cx="250" cy="208" r="22" fill="#26A69A" class="hotspot-ping"/>
+                                <circle cx="250" cy="208" r="15" fill="#26A69A" stroke="#FFFFFF" stroke-width="3"/>
+                                <text x="250" y="213" text-anchor="middle" fill="#0B0F29" font-weight="900" font-size="14">3</text>
+                            </g>
+
+                            <!-- Pin 4: Twin RTG Nuclear Batteries -->
+                            <g onclick="selectPart(3)" class="cursor-pointer">
+                                <circle cx="150" cy="206" r="22" fill="#FFB74D" class="hotspot-ping"/>
+                                <circle cx="150" cy="206" r="15" fill="#FFB74D" stroke="#FFFFFF" stroke-width="3"/>
+                                <text x="150" y="211" text-anchor="middle" fill="#0B0F29" font-weight="900" font-size="14">4</text>
+                            </g>
+
+                            <!-- Pin 5: Surface Sampler Arm -->
+                            <g onclick="selectPart(4)" class="cursor-pointer">
+                                <circle cx="435" cy="290" r="22" fill="#E85D3F" class="hotspot-ping"/>
+                                <circle cx="435" cy="290" r="15" fill="#E85D3F" stroke="#FFFFFF" stroke-width="3"/>
+                                <text x="435" y="295" text-anchor="middle" fill="#FFFFFF" font-weight="900" font-size="14">5</text>
+                            </g>
+                        </svg>
+
+                        <!-- Quick-Select Buttons Below Diagram -->
+                        <div class="flex flex-wrap justify-center gap-2 mt-3">
+                            <button onclick="selectPart(0)" class="px-3 py-1.5 rounded-xl bg-[#4FC3F7]/20 hover:bg-[#4FC3F7]/40 text-sky-200 text-xs sm:text-sm font-bold cursor-pointer">1. 3D Robot Eyes</button>
+                            <button onclick="selectPart(1)" class="px-3 py-1.5 rounded-xl bg-purple-400/20 hover:bg-purple-400/40 text-purple-200 text-xs sm:text-sm font-bold cursor-pointer">2. Weather Station</button>
+                            <button onclick="selectPart(2)" class="px-3 py-1.5 rounded-xl bg-[#26A69A]/25 hover:bg-[#26A69A]/45 text-teal-200 text-xs sm:text-sm font-bold cursor-pointer">3. Science Lab</button>
+                            <button onclick="selectPart(3)" class="px-3 py-1.5 rounded-xl bg-[#FFB74D]/20 hover:bg-[#FFB74D]/40 text-amber-200 text-xs sm:text-sm font-bold cursor-pointer">4. Nuclear Hearts</button>
+                            <button onclick="selectPart(4)" class="px-3 py-1.5 rounded-xl bg-[#E85D3F]/25 hover:bg-[#E85D3F]/45 text-orange-200 text-xs sm:text-sm font-bold cursor-pointer">5. Robot Arm</button>
+                        </div>
+                    </div>
+
+                    <!-- Selected Robot Component Explanation Card -->
+                    <div class="lg:col-span-5">
+                        <div id="part-card" class="bg-gradient-to-br from-[#1B2452] to-[#131838] border-4 border-[#4FC3F7] rounded-3xl p-6 sm:p-8 shadow-2xl space-y-5">
+                            <div class="flex items-center gap-4">
+                                <div id="part-icon" class="text-5xl bg-[#4FC3F7]/20 p-4 rounded-2xl border border-[#4FC3F7]/40">👀</div>
+                                <div>
+                                    <span id="part-badge" class="text-xs font-black uppercase tracking-wider text-[#4FC3F7]">Gadget #1 • Cameras</span>
+                                    <h3 id="part-title" class="text-2xl sm:text-3xl font-bold text-white">My Robot Eyes</h3>
+                                </div>
+                            </div>
+
+                            <p id="part-desc" class="text-base sm:text-lg text-orange-50 font-semibold leading-relaxed">
+                                Two 360-degree cylindrical scan cameras sat on my body. Twenty-five seconds after I landed, I began sending my first picture from the surface of Mars.
+                            </p>
+
+                            <div class="bg-[#FFB74D]/15 border border-[#FFB74D]/40 rounded-2xl p-4">
+                                <div class="text-xs font-black text-[#FFB74D] uppercase mb-1">🌟 Kid-Friendly Comparison:</div>
+                                <p id="part-compare" class="text-sm sm:text-base text-amber-100 font-bold">
+                                    NASA calls it the first photograph ever taken from the surface of Mars, and my later pictures made the first panorama of the surface.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ========================================================= -->
+        <!-- SECTION 4: DIG & EXPLORE MARS SOIL! (INTERACTIVE LAB)     -->
+        <!-- ========================================================= -->
+        <section id="game" class="py-16 px-4 max-w-6xl mx-auto">
+            <div class="text-center max-w-3xl mx-auto mb-8">
+                <span class="bg-[#26A69A]/25 text-[#26A69A] border border-[#26A69A]/50 px-4 py-1 rounded-full text-sm font-extrabold">
+                    CHAPTER 4 • SCIENCE MINI-GAME
+                </span>
+                <h2 class="text-3xl sm:text-4xl font-bold text-white mt-3">
+                    Dig & Explore Mars Soil!
+                </h2>
+                <p class="text-orange-100/90 text-base sm:text-lg mt-2 font-semibold">
+                    Tap a target on the Martian ground below—my robotic arm will scoop a sample into my Biology Lab hopper!
+                </p>
+            </div>
+
+            <!-- Discovered Samples Counter -->
+            <div class="flex justify-center mb-6">
+                <div class="bg-[#161D42] border-2 border-[#26A69A]/60 px-6 py-2 rounded-full flex items-center gap-3 font-extrabold text-sm sm:text-base">
+                    <span>🧪 Martian Soil Samples Analyzed:</span>
+                    <span id="samples-counter" class="text-[#26A69A] text-xl font-black">0 / 3</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+                
+                <!-- Interactive Mars Surface Sandbox SVG Scene -->
+                <div class="lg:col-span-7 rounded-3xl overflow-hidden border-4 border-[#E85D3F] shadow-2xl relative bg-gradient-to-b from-[#4B2328] via-[#9E3822] to-[#C85228] min-h-[340px] flex flex-col justify-between">
+                    
+                    <div class="p-4 flex justify-between items-center z-10">
+                        <span class="bg-black/40 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-extrabold text-orange-200">
+                            📍 Chryse Planitia (Golden Plain)
+                        </span>
+                        <span id="game-status-badge" class="bg-[#FFB74D] text-slate-950 px-3 py-1 rounded-full text-xs font-black">
+                            Ready to Dig!
+                        </span>
+                    </div>
+
+                    <!-- Interactive Excavation SVG Scene -->
+                    <svg viewBox="0 0 500 260" class="w-full h-auto mt-auto">
+                        <!-- Distant Martian Hills -->
+                        <path d="M0,150 Q120,110 250,145 T500,130 L500,260 L0,260 Z" fill="#A8381B"/>
+                        <!-- Foreground Martian Sand -->
+                        <path d="M0,175 Q220,155 500,180 L500,260 L0,260 Z" fill="#D45A2A"/>
+
+                        <!-- Viking-1 Lander on Left -->
+                        <g transform="translate(25, 55)">
+                            <rect x="55" y="15" width="22" height="28" rx="5" fill="#F8FAFC"/>
+                            <circle cx="66" cy="27" r="6" fill="#4FC3F7"/>
+                            <polygon points="20,45 120,45 135,75 120,105 20,105 5,75" fill="#E2E8F0" stroke="#475569" stroke-width="3"/>
+                            <rect x="45" y="55" width="50" height="35" rx="6" fill="#FFB74D"/>
+                            <!-- Biology Lab Hopper -->
+                            <polygon points="102,42 118,42 114,55 106,55" fill="#26A69A" stroke="#0B0F29" stroke-width="2"/>
+                            <line x1="30" y1="105" x2="10" y2="155" stroke="#94A3B8" stroke-width="6"/>
+                            <line x1="110" y1="105" x2="130" y2="155" stroke="#94A3B8" stroke-width="6"/>
+                        </g>
+
+                        <!-- Animated Articulated Robotic Arm -->
+                        <g id="robo-arm-group">
+                            <line x1="145" y1="140" x2="250" y2="185" stroke="#FFB74D" stroke-width="9" stroke-linecap="round"/>
+                            <circle cx="145" cy="140" r="8" fill="#E85D3F"/>
+                            <!-- Collector Scoop Head -->
+                            <path d="M245,178 L272,182 L265,198 L242,192 Z" fill="#F8FAFC" stroke="#0B0F29" stroke-width="2"/>
+                        </g>
+
+                        <!-- TARGET 1: Red Rusty Dust -->
+                        <g onclick="digSample(0)" class="cursor-pointer group">
+                            <ellipse cx="225" cy="222" rx="40" ry="15" fill="#9A3412" stroke="#FDE047" stroke-width="3" stroke-dasharray="5 3"/>
+                            <text x="225" y="218" text-anchor="middle" font-size="22">🏜️</text>
+                            <rect x="168" y="236" width="114" height="20" rx="10" fill="#0B0F29"/>
+                            <text x="225" y="249" text-anchor="middle" fill="#FDE047" font-size="10" font-weight="bold">Red Dust</text>
+                        </g>
+
+                        <!-- TARGET 2: Sulfur Mystery Rock -->
+                        <g onclick="digSample(1)" class="cursor-pointer group">
+                            <path d="M305,192 Q330,160 360,178 Q380,195 358,212 L305,210 Z" fill="#7C2D12" stroke="#4FC3F7" stroke-width="3"/>
+                            <text x="336" y="196" text-anchor="middle" font-size="20">🔩</text>
+                            <rect x="274" y="215" width="124" height="20" rx="10" fill="#0B0F29"/>
+                            <text x="336" y="228" text-anchor="middle" fill="#4FC3F7" font-size="10" font-weight="bold">Stuck Pin</text>
+                        </g>
+
+                        <!-- TARGET 3: Chilly Morning Frost -->
+                        <g onclick="digSample(2)" class="cursor-pointer group">
+                            <ellipse cx="430" cy="212" rx="38" ry="14" fill="#312E81" stroke="#A5F3FC" stroke-width="3"/>
+                            <text x="430" y="209" text-anchor="middle" font-size="21">🔬</text>
+                            <rect x="370" y="228" width="120" height="20" rx="10" fill="#0B0F29"/>
+                            <text x="430" y="241" text-anchor="middle" fill="#A5F3FC" font-size="10" font-weight="bold">Life Test</text>
+                        </g>
+                    </svg>
+                </div>
+
+                <!-- Animated Science Lab Monitor -->
+                <div class="lg:col-span-5 bg-[#141B3D] border-4 border-[#26A69A]/70 rounded-3xl p-6 flex flex-col justify-between shadow-2xl">
+                    <div>
+                        <div class="flex items-center justify-between border-b border-white/10 pb-3 mb-4">
+                            <span class="font-black text-[#26A69A] text-sm sm:text-base flex items-center gap-2">
+                                <span>🔬</span> ONBOARD BIOLOGY LAB MONITOR
+                            </span>
+                            <span id="lab-sample-tag" class="text-xs font-bold bg-white/10 px-3 py-1 rounded-full text-orange-200">
+                                Waiting for sample...
+                            </span>
+                        </div>
+
+                        <div id="lab-result-box" class="space-y-4">
+                            <div class="text-5xl text-center py-2" id="lab-icon">🤖</div>
+                            <h3 id="lab-title" class="text-xl sm:text-2xl font-bold text-white text-center">
+                                Tap the dust, the stuck pin, or the life test!
+                            </h3>
+                            <p id="lab-text" class="text-orange-100 text-base sm:text-lg font-semibold leading-relaxed text-center">
+                                Tap a target and see what my arm and my instruments did on Mars.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Touch-Friendly Action Buttons -->
+                    <div class="grid grid-cols-3 gap-2 pt-4 mt-4 border-t border-white/10">
+                        <button onclick="digSample(0)" class="p-2.5 rounded-xl bg-[#FFB74D]/20 hover:bg-[#FFB74D]/40 border border-[#FFB74D]/50 text-xs font-extrabold text-[#FFB74D] cursor-pointer">
+                            🏜️ Scoop Dust
+                        </button>
+                        <button onclick="digSample(1)" class="p-2.5 rounded-xl bg-[#4FC3F7]/20 hover:bg-[#4FC3F7]/40 border border-[#4FC3F7]/50 text-xs font-extrabold text-[#4FC3F7] cursor-pointer">
+                            🔩 Free the Pin
+                        </button>
+                        <button onclick="digSample(2)" class="p-2.5 rounded-xl bg-[#26A69A]/25 hover:bg-[#26A69A]/45 border border-[#26A69A]/60 text-xs font-extrabold text-teal-200 cursor-pointer">
+                            🔬 Life Test
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+
+        <!-- ========================================================= -->
+        <!-- SECTION 5: SPACE QUIZ & JUNIOR EXPLORER DIPLOMA           -->
+        <!-- ========================================================= -->
+        <section id="quiz" class="py-16 px-4 bg-[#0E1333] border-t-2 border-[#E85D3F]/30">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-10">
+                    <span class="bg-[#FFB74D]/20 text-[#FFB74D] border border-[#FFB74D]/40 px-4 py-1 rounded-full text-sm font-extrabold">
+                        CHAPTER 5 • FINAL MISSION CHALLENGE
+                    </span>
+                    <h2 class="text-3xl sm:text-4xl font-bold text-white mt-3">
+                        Space Quiz & Junior Explorer Diploma
+                    </h2>
+                    <p class="text-orange-100/90 text-base sm:text-lg mt-2 font-semibold">
+                        Answer 4 fun space questions to unlock your own diploma!
+                    </p>
+                </div>
+
+                <!-- Quiz Card -->
+                <div id="quiz-container" class="bg-[#18204A] border-4 border-[#FFB74D]/70 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+                    <div class="flex justify-between items-center">
+                        <span id="quiz-progress" class="bg-[#FFB74D] text-slate-950 font-black px-4 py-1 rounded-full text-sm">
+                            Question 1 of 4
+                        </span>
+                        <span id="quiz-score-badge" class="text-[#4FC3F7] font-extrabold text-sm sm:text-base">
+                            ⭐ Stars Earned: 0
+                        </span>
+                    </div>
+
+                    <h3 id="quiz-question" class="text-xl sm:text-2xl font-bold text-white leading-snug">
+                        1. When did Viking-1 land safely on Mars?
+                    </h3>
+
+                    <div id="quiz-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <!-- Options populated via JS -->
+                    </div>
+
+                    <!-- Celebratory Feedback Bubble -->
+                    <div id="quiz-feedback" class="hidden rounded-2xl p-4 font-bold text-base sm:text-lg"></div>
+
+                    <div class="flex justify-end">
+                        <button id="quiz-next-btn" onclick="nextQuestion()" class="hidden btn-3d bg-gradient-to-r from-[#26A69A] to-[#4FC3F7] text-slate-950 font-black px-6 py-3 rounded-2xl text-base sm:text-lg cursor-pointer">
+                            Next Question ➡️
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Personalized Junior Mars Explorer Diploma Generator -->
+                <div id="diploma-section" class="hidden space-y-6">
+                    <div class="bg-[#18204A] border-2 border-[#26A69A] rounded-3xl p-6 text-center space-y-4">
+                        <div class="text-5xl">🎉🏆🚀</div>
+                        <h3 class="text-2xl sm:text-3xl font-bold text-white">
+                            Awesome Job, Space Explorer!
+                        </h3>
+                        <p class="text-orange-100 font-semibold text-base sm:text-lg">
+                            Type your name below to put it on your Mars Explorer Diploma:
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+                            <input type="text" id="kid-name-input" oninput="updateDiplomaName()" placeholder="e.g., Maya or Leo" maxlength="28" class="flex-grow px-4 py-3 rounded-2xl bg-white text-slate-900 font-extrabold text-base sm:text-lg focus:outline-none focus:ring-4 focus:ring-[#FFB74D]">
+                            <button onclick="updateDiplomaName()" class="btn-3d bg-[#FFB74D] hover:bg-amber-300 text-slate-950 font-black px-6 py-3 rounded-2xl cursor-pointer">
+                                Sign Diploma ✍️
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Diploma Preview Card -->
+                    <div id="diploma-card" class="diploma-border rounded-3xl p-6 sm:p-10 text-slate-900 relative overflow-hidden max-w-2xl mx-auto text-center space-y-4">
+                        <div class="flex justify-between items-center text-xs sm:text-sm font-black text-[#E85D3F] uppercase tracking-widest">
+                            <span>SILENT EXPLORERS • VIKING 1</span>
+                            <span>CHRYSE PLANITIA, MARS</span>
+                        </div>
+
+                        <div class="text-5xl sm:text-6xl">🏅</div>
+
+                        <h4 class="text-2xl sm:text-4xl font-display font-bold text-[#E85D3F] uppercase tracking-wide">
+                            Junior Mars Explorer Diploma
+                        </h4>
+
+                        <p class="text-base sm:text-lg font-bold text-slate-700">
+                            This diploma is proudly awarded to
+                        </p>
+
+                        <div id="diploma-name-display" class="text-2xl sm:text-4xl font-black text-[#0B0F29] border-b-4 border-dashed border-[#FFB74D] pb-2 max-w-md mx-auto">
+                            Junior Space Explorer
+                        </div>
+
+                        <p class="text-sm sm:text-base font-bold text-slate-700 max-w-lg mx-auto leading-relaxed">
+                            for exploring Viking 1, the first successful Mars lander, and celebrating 50 years since its landing!
+                        </p>
+
+                        <div class="pt-4 flex flex-wrap justify-between items-center gap-4 text-xs sm:text-sm font-extrabold text-slate-600 border-t-2 border-amber-300">
+                            <div class="flex items-center gap-2 text-left">
+                                <span class="text-2xl">🤖</span>
+                                <span>Viking 1 (Thomas Mutch Memorial Station)</span>
+                            </div>
+                            <div class="bg-[#E85D3F] text-white px-3 py-1 rounded-full">
+                                50 Years on Mars (1976–2026)
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PNG Download & Replay Buttons -->
+                    <div class="flex flex-wrap justify-center gap-4">
+                        <button onclick="downloadDiplomaPNG()" class="btn-3d bg-[#4FC3F7] hover:bg-sky-300 text-slate-950 font-black px-6 py-3.5 rounded-2xl text-base flex items-center gap-2 cursor-pointer">
+                            <span>📥 Download Diploma as PNG</span>
+                        </button>
+                        <button onclick="resetQuiz()" class="px-5 py-3 text-orange-300 hover:text-white underline font-bold text-sm cursor-pointer">
+                            🔄 Play Quiz Again
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-[#070A1C] border-t border-white/10 py-6 px-4 text-center text-xs sm:text-sm text-sky-200/70 relative z-10">
+        <div class="max-w-4xl mx-auto space-y-1">
+            <p class="font-bold text-[#FFB74D]">
+                Part of Silent Explorers 🚀 • "Viking 1: 50 Years on Mars"
+            </p>
+            <p>
+                Facts: NASA science.nasa.gov/mission/viking and NASA NSSDCA 1975-075C and 1975-075A. Not NASA material; made by students.
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // ==========================================
+        // 1. ROBOT SOUND SYNTHESIZER (Tone.js)
+        // ==========================================
+        let soundEnabled = true;
+        let synth = null;
+
+        function initAudio() {
+            if (!synth && typeof Tone !== 'undefined') {
+                synth = new Tone.Synth({
+                    oscillator: { type: 'triangle' },
+                    envelope: { attack: 0.02, decay: 0.1, sustain: 0.1, release: 0.2 }
+                }).toDestination();
+            }
+        }
+
+        function playBeep(notes = ["C5", "E5", "G5"], duration = 0.09) {
+            if (!soundEnabled) return;
+            try {
+                initAudio();
+                if (Tone.context.state !== 'running') {
+                    Tone.start();
+                }
+                const now = Tone.now();
+                notes.forEach((note, index) => {
+                    synth.triggerAttackRelease(note, duration, now + index * 0.1);
+                });
+            } catch (e) {
+                // Ignore audio context restriction before first user tap
+            }
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('sound-icon');
+            icon.textContent = soundEnabled ? '🔊' : '🔇';
+            if (soundEnabled) playBeep(["E5", "A5"]);
+        }
+
+        // ==========================================
+        // 2. TWINKLING STARFIELD GENERATOR
+        // ==========================================
+        function createStars() {
+            const container = document.getElementById('stars-container');
+            const count = 55;
+            for (let i = 0; i < count; i++) {
+                const star = document.createElement('div');
+                const size = Math.random() * 3 + 1;
+                star.style.position = 'absolute';
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.backgroundColor = '#FFF8F0';
+                star.style.borderRadius = '50%';
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.opacity = Math.random() * 0.7 + 0.2;
+                container.appendChild(star);
+            }
+        }
+
+        // ==========================================
+        // 3. NAVIGATION & HERO SPEECH INTERACTION
+        // ==========================================
+        function scrollToSection(id) {
+            playBeep(["C5", "G5"], 0.07);
+            const el = document.getElementById(id);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        const heroPhrases = [
+            "\"Beep-boop! It's so wonderful to hear visitors from Earth! Mars is super quiet, so I love chatting with young space explorers!\"",
+            "\"My NASA team planned for just 90 days, but I kept working on Mars for more than six years!\"",
+            "\"Twenty-five seconds after I landed, I began sending my first picture from the surface of Mars!\"",
+            "\"Click 'Start Mars Adventure'—I'll show you my space journey and let you scoop Martian soil with my robotic arm!\""
+        ];
+        let phraseIndex = 0;
+
+        function robotBeepTalk() {
+            playBeep(["C5", "G5", "E5", "C6"], 0.08);
+            const speechEl = document.getElementById('hero-speech');
+            speechEl.textContent = heroPhrases[phraseIndex];
+            phraseIndex = (phraseIndex + 1) % heroPhrases.length;
+        }
+
+        function startAdventure() {
+            playBeep(["C5", "E5", "G5", "C6"], 0.1);
+            scrollToSection('timeline');
+        }
+
+        // ==========================================
+        // 4. SECTION 2: MY SPACE JOURNEY (1975–1982)
+        // ==========================================
+        const timelineData = [
+            {
+                emoji: "🔥",
+                date: "August 20, 1975 • Cape Canaveral, Florida",
+                title: "Blast Off on Titan IIIE-Centaur!",
+                story: "Together with my twin Orbiter partner, I weighed about 3,500 kilograms when fully fueled. A Titan IIIE-Centaur rocket launched us from Cape Canaveral, Florida, and we headed for Mars.",
+                fact: "💡 Fun Fact: I have a twin! Viking 2 landed on Mars on September 3, 1976, at Utopia Planitia."
+            },
+            {
+                emoji: "🛸",
+                date: "June 19, 1976 • Reaching Mars Orbit",
+                title: "Reaching Mars Orbit!",
+                story: "After about 10 months in space, we entered orbit around Mars. Pictures taken from orbit helped scientists choose where I would land.",
+                fact: "💡 Fun Fact: My Orbiter partner kept circling Mars until 1980."
+            },
+            {
+                emoji: "🪂",
+                date: "July 20, 1976 • Chryse Planitia",
+                title: "Touchdown on the Golden Plain!",
+                story: "I separated from the Orbiter and touched down in western Chryse Planitia, the Golden Plain. Only 25 seconds later, I began sending my first picture from the surface of Mars!",
+                fact: "💡 Fun Fact: NASA calls it the first photograph ever taken from the surface of Mars."
+            },
+            {
+                emoji: "🦾",
+                date: "After landing • Soil Sampling",
+                title: "Scooping Mars Soil!",
+                story: "My sampler arm had a collector head, a temperature sensor and a magnet. It scooped up Martian soil for my science instruments.",
+                fact: "💡 Fun Fact: At first, a locking pin on my arm was stuck, and it took 5 days to shake it free!"
+            },
+            {
+                emoji: "🏛️",
+                date: "1981–1982 • Thomas Mutch Memorial Station",
+                title: "Renamed & Sleeping Hero!",
+                story: "I was planned to work for 90 days, but I kept working on Mars for more than six years. In January 1981 I was named the Thomas Mutch Memorial Station, in honor of the leader of the Viking imaging team. In November 1982, contact with me was lost. I'm still on the Golden Plain.",
+                fact: "💡 Fun Fact: I found no traces of life, but I helped show that Mars is a cold planet with volcanic soil."
+            }
+        ];
+
+        function selectTimeline(index) {
+            playBeep(["D5", "F#5", "A5"], 0.08);
+            const item = timelineData[index];
+
+            document.querySelectorAll('.tl-card').forEach((card, i) => {
+                if (i === index) {
+                    card.className = "tl-card text-left p-4 rounded-3xl border-4 border-[#FFB74D] bg-gradient-to-b from-[#E85D3F]/40 to-[#161D42] shadow-xl transition transform -translate-y-1 cursor-pointer";
+                } else {
+                    card.className = "tl-card text-left p-4 rounded-3xl border-2 border-white/15 bg-[#161D42]/80 hover:border-[#4FC3F7] shadow-lg transition transform hover:-translate-y-1 cursor-pointer";
+                }
+            });
+
+            document.getElementById('tl-emoji').textContent = item.emoji;
+            document.getElementById('tl-date').textContent = item.date;
+            document.getElementById('tl-title').textContent = item.title;
+            document.getElementById('tl-story').textContent = item.story;
+            document.getElementById('tl-fact').textContent = item.fact;
+        }
+
+        // ==========================================
+        // 5. SECTION 3: INSIDE MY BODY (ROBOT X-RAY)
+        // ==========================================
+        const partsData = [
+            {
+                icon: "👀",
+                badge: "Gadget #1 • Cameras",
+                title: "My Robot Eyes",
+                desc: "Two 360-degree cylindrical scan cameras sat on my body. Twenty-five seconds after I landed, I began sending my first picture from the surface of Mars.",
+                compare: "NASA calls it the first photograph ever taken from the surface of Mars, and my later pictures made the first panorama of the surface."
+            },
+            {
+                icon: "🌡️",
+                badge: "Gadget #2 • Meteorology Boom",
+                title: "My Weather Station",
+                desc: "On a boom on my body I had sensors for temperature, wind direction and wind speed.",
+                compare: "It worked like a weather station on Earth, but on another planet."
+            },
+            {
+                icon: "🧬",
+                badge: "Gadget #3 • Biology Experiments & GCMS",
+                title: "My Mini Science Lab",
+                desc: "Inside me were three biology experiments and a gas chromatograph mass spectrometer (GCMS) for studying Martian soil.",
+                compare: "They looked for signs of life. NASA says they found unexpected chemical activity, but no clear evidence of living microorganisms."
+            },
+            {
+                icon: "🔋",
+                badge: "Gadget #4 • Twin RTGs",
+                title: "My Warm Nuclear Hearts",
+                desc: "Two radioisotope thermoelectric generators (RTGs) powered me. They contained plutonium 238.",
+                compare: "An RTG makes electricity from the heat of radioactive material."
+            },
+            {
+                icon: "🦾",
+                badge: "Gadget #5 • Surface Sampler Arm",
+                title: "My Extendable Robot Arm",
+                desc: "My sampler arm had a collector head, a temperature sensor and a magnet.",
+                compare: "Scientists on Earth sent the commands, because no person was on Mars to move it."
+            }
+        ];
+
+        function selectPart(index) {
+            playBeep(["E5", "B5"], 0.08);
+            const part = partsData[index];
+            document.getElementById('part-icon').textContent = part.icon;
+            document.getElementById('part-badge').textContent = part.badge;
+            document.getElementById('part-title').textContent = part.title;
+            document.getElementById('part-desc').textContent = part.desc;
+            document.getElementById('part-compare').textContent = part.compare;
+        }
+
+        // ==========================================
+        // 6. SECTION 4: DIG & EXPLORE MARS SOIL!
+        // ==========================================
+        const samplesData = [
+            {
+                armAngle: 14,
+                tag: "Step #1: Red Dust",
+                icon: "🏜️🧪",
+                title: "Soil for My Instruments",
+                text: "My sampler arm scooped up Martian soil from the Golden Plain for my science instruments."
+            },
+            {
+                armAngle: -4,
+                tag: "Step #2: The Stuck Pin",
+                icon: "🦾🔩",
+                title: "My Arm Got Stuck!",
+                text: "A locking pin on my sampler arm was stuck at first. It took 5 days to shake it free!"
+            },
+            {
+                armAngle: -14,
+                tag: "Step #3: The Life Test",
+                icon: "🔬🧬",
+                title: "Any Life on Mars?",
+                text: "Three biology experiments tested the soil. They found unexpected chemical activity, but no clear evidence of living microorganisms."
+            }
+        ];
+
+        const discoveredSamples = new Set();
+
+        function digSample(index) {
+            const sample = samplesData[index];
+            const arm = document.getElementById('robo-arm-group');
+            const statusBadge = document.getElementById('game-status-badge');
+
+            playBeep(["C5", "D5", "E5", "G5"], 0.08);
+            statusBadge.textContent = "🦾 Scooping Sample...";
+            
+            // Animate arm reaching out to target
+            arm.style.transform = `rotate(${sample.armAngle}deg) scaleX(1.15)`;
+
+            setTimeout(() => {
+                // Lift sample into Biology Lab hopper
+                arm.style.transform = `rotate(-28deg) scaleX(0.75)`;
+                statusBadge.textContent = "🔬 Scanning in Lab...";
+                playBeep(["F5", "A5"], 0.07);
+            }, 450);
+
+            setTimeout(() => {
+                arm.style.transform = `rotate(0deg) scaleX(1)`;
+                statusBadge.textContent = "✅ Discovery Complete!";
+                playBeep(["G5", "C6"], 0.1);
+
+                document.getElementById('lab-sample-tag').textContent = sample.tag;
+                document.getElementById('lab-icon').textContent = sample.icon;
+                document.getElementById('lab-title').textContent = sample.title;
+                document.getElementById('lab-text').textContent = sample.text;
+
+                discoveredSamples.add(index);
+                document.getElementById('samples-counter').textContent = `${discoveredSamples.size} / 3`;
+            }, 950);
+        }
+
+        // ==========================================
+        // 7. SECTION 5: SPACE QUIZ & PNG DIPLOMA
+        // ==========================================
+        const quizQuestions = [
+            {
+                q: "1. When did Viking 1 land on Mars?",
+                options: [
+                    "July 20, 1976",
+                    "January 1, 2025",
+                    "April 12, 1961",
+                    "December 31, 1999"
+                ],
+                correct: 0,
+                praise: "Beep-boop! Spot on! I touched down on Chryse Planitia on July 20, 1976!"
+            },
+            {
+                q: "2. How long was the Viking mission planned to last after landing?",
+                options: [
+                    "1 day",
+                    "90 days",
+                    "10 years",
+                    "1,000 years"
+                ],
+                correct: 1,
+                praise: "Right! The mission was planned for 90 days, and I worked on Mars for more than six years!"
+            },
+            {
+                q: "3. What did Viking's biology experiments find in the Martian soil?",
+                options: [
+                    "Gold coins",
+                    "Unexpected chemical activity, but no clear evidence of life",
+                    "Sea shells",
+                    "Tree leaves"
+                ],
+                correct: 1,
+                praise: "Awesome! The chemistry was puzzling, but there was no clear evidence of living microorganisms."
+            },
+            {
+                q: "4. What powered Viking 1?",
+                options: [
+                    "Two radioisotope thermoelectric generators (RTGs)",
+                    "A giant extension cord from Earth",
+                    "A campfire made of Mars rocks",
+                    "Windmill blades on my roof"
+                ],
+                correct: 0,
+                praise: "You nailed it! Two RTGs made electricity from the heat of radioactive material."
+            }
+        ];
+
+        let currentQ = 0;
+        let score = 0;
+        let answered = false;
+
+        function renderQuestion() {
+            const item = quizQuestions[currentQ];
+            answered = false;
+
+            document.getElementById('quiz-progress').textContent = `Question ${currentQ + 1} of ${quizQuestions.length}`;
+            document.getElementById('quiz-score-badge').textContent = `⭐ Stars Earned: ${score}`;
+            document.getElementById('quiz-question').textContent = item.q;
+            document.getElementById('quiz-feedback').classList.add('hidden');
+            document.getElementById('quiz-next-btn').classList.add('hidden');
+
+            const optionsDiv = document.getElementById('quiz-options');
+            optionsDiv.innerHTML = '';
+
+            item.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "quiz-opt-btn text-left p-4 rounded-2xl border-2 border-white/20 bg-white/5 hover:bg-[#E85D3F]/25 hover:border-[#FFB74D] font-extrabold text-base sm:text-lg text-white transition cursor-pointer";
+                btn.textContent = opt;
+                btn.onclick = () => checkAnswer(idx);
+                optionsDiv.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(selectedIndex) {
+            if (answered) return;
+            answered = true;
+
+            const item = quizQuestions[currentQ];
+            const feedback = document.getElementById('quiz-feedback');
+            const nextBtn = document.getElementById('quiz-next-btn');
+            const allBtns = document.querySelectorAll('.quiz-opt-btn');
+
+            allBtns.forEach((btn, idx) => {
+                if (idx === item.correct) {
+                    btn.className = "quiz-opt-btn text-left p-4 rounded-2xl border-4 border-[#26A69A] bg-[#26A69A]/30 font-black text-base sm:text-lg text-white";
+                } else if (idx === selectedIndex) {
+                    btn.className = "quiz-opt-btn text-left p-4 rounded-2xl border-4 border-rose-400 bg-rose-500/30 font-extrabold text-base sm:text-lg text-white opacity-80";
+                } else {
+                    btn.classList.add('opacity-50');
+                }
+            });
+
+            feedback.classList.remove('hidden');
+            if (selectedIndex === item.correct) {
+                score++;
+                playBeep(["C5", "E5", "G5", "C6"], 0.09);
+                feedback.className = "rounded-2xl p-4 font-extrabold text-base sm:text-lg bg-[#26A69A]/25 border-2 border-[#26A69A] text-teal-200";
+                feedback.textContent = `🎉 Correct! ${item.praise}`;
+            } else {
+                playBeep(["E4", "C4"], 0.12);
+                feedback.className = "rounded-2xl p-4 font-extrabold text-base sm:text-lg bg-amber-500/25 border-2 border-amber-400 text-amber-200";
+                feedback.textContent = `🤖 Almost! The right answer is highlighted in teal. ${item.praise}`;
+            }
+
+            document.getElementById('quiz-score-badge').textContent = `⭐ Stars Earned: ${score}`;
+            nextBtn.classList.remove('hidden');
+            nextBtn.textContent = currentQ === quizQuestions.length - 1 ? "Unlock My Diploma! 🏆" : "Next Question ➡️";
+        }
+
+        function nextQuestion() {
+            currentQ++;
+            if (currentQ < quizQuestions.length) {
+                playBeep(["E5", "G5"], 0.07);
+                renderQuestion();
+            } else {
+                playBeep(["C5", "E5", "G5", "C6", "E6"], 0.1);
+                document.getElementById('quiz-container').classList.add('hidden');
+                document.getElementById('diploma-section').classList.remove('hidden');
+            }
+        }
+
+        function updateDiplomaName() {
+            const input = document.getElementById('kid-name-input').value.trim();
+            const display = document.getElementById('diploma-name-display');
+            display.textContent = input || "Junior Space Explorer";
+        }
+
+        function resetQuiz() {
+            currentQ = 0;
+            score = 0;
+            document.getElementById('diploma-section').classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            renderQuestion();
+        }
+
+        // Crisp HTML5 Canvas PNG Diploma Generator
+        function downloadDiplomaPNG() {
+            playBeep(["C5", "G5", "C6"], 0.09);
+            const explorerName = document.getElementById('kid-name-input').value.trim() || "Junior Space Explorer";
+
+            const canvas = document.createElement('canvas');
+            canvas.width = 1200;
+            canvas.height = 800;
+            const ctx = canvas.getContext('2d');
+
+            // Cream parchment background
+            const grad = ctx.createLinearGradient(0, 0, 1200, 800);
+            grad.addColorStop(0, '#FFFDF7');
+            grad.addColorStop(1, '#FFE8CE');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 1200, 800);
+
+            // Double decorative Mars border
+            ctx.strokeStyle = '#E85D3F';
+            ctx.lineWidth = 14;
+            ctx.strokeRect(28, 28, 1144, 744);
+            ctx.strokeStyle = '#FFB74D';
+            ctx.lineWidth = 5;
+            ctx.strokeRect(48, 48, 1104, 704);
+
+            // Header bar
+            ctx.fillStyle = '#E85D3F';
+            ctx.font = '900 22px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('SILENT EXPLORERS • VIKING 1', 85, 105);
+            ctx.textAlign = 'right';
+            ctx.fillText('CHRYSE PLANITIA, MARS', 1115, 105);
+
+            // Medal emblem
+            ctx.textAlign = 'center';
+            ctx.font = '72px sans-serif';
+            ctx.fillText('🏅', 600, 195);
+
+            // Diploma Title
+            ctx.fillStyle = '#E85D3F';
+            ctx.font = '900 48px sans-serif';
+            ctx.fillText('JUNIOR MARS EXPLORER DIPLOMA', 600, 275);
+
+            // Subtitle
+            ctx.fillStyle = '#334155';
+            ctx.font = '700 26px sans-serif';
+            ctx.fillText('This diploma is proudly awarded to', 600, 340);
+
+            // Explorer's Name
+            ctx.fillStyle = '#0B0F29';
+            ctx.font = '900 54px sans-serif';
+            ctx.fillText(explorerName, 600, 425);
+
+            // Dashed underline under name
+            ctx.save();
+            ctx.setLineDash([12, 8]);
+            ctx.strokeStyle = '#FFB74D';
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.moveTo(260, 448);
+            ctx.lineTo(940, 448);
+            ctx.stroke();
+            ctx.restore();
+
+            // Achievement text
+            ctx.fillStyle = '#334155';
+            ctx.font = '700 24px sans-serif';
+            ctx.fillText('for exploring Viking 1, the first successful Mars lander,', 600, 515);
+            ctx.fillText('and celebrating 50 years since its landing on Mars!', 600, 555);
+
+            // Divider line
+            ctx.strokeStyle = '#FCD34D';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(85, 625);
+            ctx.lineTo(1115, 625);
+            ctx.stroke();
+
+            // Signature & 50 Years Badge
+            ctx.fillStyle = '#475569';
+            ctx.font = '800 22px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText('🤖 Viking 1 (Thomas Mutch Memorial Station)', 85, 690);
+
+            ctx.fillStyle = '#E85D3F';
+            ctx.beginPath();
+            ctx.roundRect(825, 656, 290, 48, 24);
+            ctx.fill();
+            ctx.fillStyle = '#FFFFFF';
+            ctx.textAlign = 'center';
+            ctx.font = '900 20px sans-serif';
+            ctx.fillText('50 Years on Mars (1976–2026)', 970, 687);
+
+            // Trigger PNG Download
+            const link = document.createElement('a');
+            link.download = `Viking1_Mars_Explorer_Diploma_${explorerName.replace(/\s+/g, '_')}.png`;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // Initialize on page load
+        window.onload = function() {
+            createStars();
+            renderQuestion();
+        };
+    </script>
+</body>
+</html>
