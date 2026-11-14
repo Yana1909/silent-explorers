@@ -112,8 +112,6 @@
       "invite.text": "No student project yet — this could be yours. Make a small animation, mini-game or short video about {name}, and it will play here instead of the photo.",
       "next.label": "Next machine to find",
       "next.stop": "Next stop: {world}",
-      "tip.project": "Student project inside",
-      "card.project": "Student project",
       "cmp.times": "About {n}× longer than planned",
       "video.note": "Artist's reconstruction — not NASA footage",
       "video.title": "Video",

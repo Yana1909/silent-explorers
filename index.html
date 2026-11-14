@@ -850,8 +850,7 @@
       if (tipMarker && !uiPanelOpen && !trans){
         if (tipId !== tipMarker.item.id){
           tipId = tipMarker.item.id;
-          var tag = found[tipId] ? '<span class="tip-tag seen">' + t("state.seen") + '</span>'
-            : (tipMarker.hasProject ? '<span class="tip-tag">' + t("tip.project") + '</span>' : '');
+          var tag = found[tipId] ? '<span class="tip-tag seen">' + t("state.seen") + '</span>' : '';
           hoverTip.innerHTML = loc(tipMarker.item).name + tag;
         }
         hoverTip.style.left = tipMarker.sx + "px";
@@ -954,7 +953,6 @@
       b.dataset.id = item.id;
       b.innerHTML =
         '<span class="card-thumb"><img src="' + item.photo + '" alt="" loading="lazy">' +
-          (hasProject(item.id) ? '<span class="card-play">' + ICON.play + '<span>' + t("card.project") + '</span></span>' : '') +
           '<span class="card-stamp">' + ICON.check + '</span></span>' +
         '<span class="card-body"><span class="card-name">' + L.name + '</span>' +
           '<span class="card-kind">' + L.kind + '</span>' +
