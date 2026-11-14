@@ -12,7 +12,7 @@ Each marker is also a slot for a short animation, mini-game or video made by a s
 - **Opportunity** (`projects/opportunity.js`) — "Пилова буря", a mini-game about surviving a Martian dust storm.
 - **Perseverance's Parachute & Backshell** (`projects/perseverance-debris.js`) — "Seven Minutes to Mars" / "Сім хвилин до Марса", a video clip (artist's reconstruction, not NASA footage).
 
-The other six locations (Lunokhod 2, LRV-17, Surveyor 3, Spirit, Viking 1, InSight) are open for new submissions.
+The other five locations (LRV-17, Surveyor 3, Spirit, Viking 1, InSight) are open for new submissions.
 
 ### Adding your own project
 
@@ -31,7 +31,7 @@ window.STUDENT_PROJECTS['<location id>'] = {
 };
 ```
 
-Location ids: `eagle`, `lunokhod2`, `lrv17`, `surveyor3`, `opportunity`, `spirit`, `viking1`, `insight`, `perseverance-debris`, `mer`, `apollo15`, `pathfinder`.
+Location ids: `eagle`, `lrv17`, `surveyor3`, `opportunity`, `spirit`, `viking1`, `insight`, `perseverance-debris`, `mer`, `apollo15`, `pathfinder`.
 
 #### An animation or a mini-game
 
@@ -81,7 +81,7 @@ How it is built (plain JavaScript, no libraries, no build step; all files are lo
 
 - `js/i18n.js` — the engine and the English interface strings (`window.I18N.en`): `t(key, params)`, `pick(value)`, `onLangChange(fn)`, `getLang()`, `setLang()`, `addStrings()`, `localizeItem()`.
 - `js/i18n.uk.js` — the Ukrainian interface strings (same keys).
-- `js/i18n-objects.js` — the Ukrainian texts of the twelve objects (name, kind, first-person story, facts, "why it mattered", note) plus the translation glossary. The English originals stay in `DATA` in `index.html`.
+- `js/i18n-objects.js` — the Ukrainian texts of the eleven objects (name, kind, first-person story, facts, "why it mattered", note) plus the translation glossary. The English originals stay in `DATA` in `index.html`.
 
 ### Add or change an interface string
 
@@ -118,7 +118,7 @@ css/styles.css        All styles (colours and fonts are CSS variables in :root)
 js/                    Language support (see "Language")
   i18n.js              Engine + English interface strings: t(), pick(), onLangChange()
   i18n.uk.js           Ukrainian interface strings
-  i18n-objects.js      Ukrainian texts of the twelve objects + translation glossary
+  i18n-objects.js      Ukrainian texts of the eleven objects + translation glossary
 projects/              Student project modules (see above)
   _template.js         Starter for a canvas animation or mini-game
   _video.js            Shared helper for video projects (createVideoProject)
