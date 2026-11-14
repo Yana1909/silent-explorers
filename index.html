@@ -165,6 +165,7 @@
 <script src="projects/pathfinder.js"></script>
 <script src="projects/apollo15.js"></script>
 <script src="projects/viking1.js"></script>
+<script src="projects/insight.js"></script>
 <script>
 (function(){
   var DATA = {
@@ -249,7 +250,7 @@
   // Text in the current language (js/i18n.js, js/i18n-objects.js). The English
   // DATA above is the source; the Ukrainian text of each object lives in I18N_OBJECTS.uk.
   function worldName(world){ return t("world." + world); }
-  function typeLabel(type){ return t("type." + (type === "game" || type === "quiz" || type === "video" || type === "comic" ? type : "animation")); }
+  function typeLabel(type){ return t("type." + (type === "game" || type === "quiz" || type === "panorama" || type === "video" || type === "comic" ? type : "animation")); }
   function loc(item){ return window.localizeItem(item); }
 
   var root = document.documentElement;

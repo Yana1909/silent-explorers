@@ -103,6 +103,7 @@
       "type.animation": "Animation",
       "type.game": "Mini-game",
       "type.quiz": "Quiz",
+      "type.panorama": "Panorama explorer",
       "type.video": "Video",
       "type.comic": "Comic",
       "term.sol": "A sol is one Martian day (short for “solar day”): about 24 h 40 min, roughly 40 minutes longer than an Earth day. 90 sols ≈ 92 Earth days.",
