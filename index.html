@@ -84,7 +84,6 @@
     <ul class="legend">
       <li><span class="key k-new"></span><span data-i18n="state.new">Not found yet</span></li>
       <li><span class="key k-seen"></span><span data-i18n="state.seen">Visited</span></li>
-      <li><span class="key k-project"></span><span data-i18n="legend.project">Has a student animation, mini-game or video</span></li>
     </ul>
     <div class="chip-row" id="chipRow"></div>
     <p class="caption" id="stageCaption" data-i18n="collection.caption">Positions use each mission's real landing coordinates on a stylized surface.</p>
@@ -1098,7 +1097,7 @@
 
   function stageEmptyHtml(st){
     var L = loc(st.item);
-    return '<div class="cta-empty"><img src="' + st.item.photo + '" alt="' + t("panel.photo.alt", { name:L.name }) + '"><span class="credit">NASA</span><button type="button" class="slot-btn" data-action="invite">' + ICON.plus + t("project.slot") + '</button></div>';
+    return '<div class="cta-empty"><img src="' + st.item.photo + '" alt="' + t("panel.photo.alt", { name:L.name }) + '"><span class="credit">NASA</span></div>';
   }
 
   function bylineHtml(st){
@@ -1111,11 +1110,6 @@
   function cardContentHtml(st){
     var item = st.item, L = loc(item), isMoon = st.world === "moon";
     var noteHtml = L.note ? '<div class="note">' + L.note + '</div>' : '';
-    var inviteHtml = st.proj ? '' :
-      '<div class="invite-card" id="inviteCard"><span class="invite-icon">' + ICON.plus + '</span><div>' +
-        '<strong>' + t("invite.title") + '</strong>' +
-        '<p>' + t("invite.text", { name:L.short }) + '</p>' +
-      '</div></div>';
     var nextHtml = nextTarget
       ? '<button type="button" class="next-btn" data-action="next"><span><small>' +
           (nextTarget.world === st.world ? t("next.label") : t("next.stop", { world:worldName(nextTarget.world) })) +
@@ -1134,7 +1128,7 @@
         '<dl class="facts">' + factTiles(item) + '</dl>' +
         '<div class="section-label">' + t("panel.why") + '</div>' +
         '<p class="why">' + L.why + '</p>' +
-        noteHtml + inviteHtml + nextHtml;
+        noteHtml + nextHtml;
   }
 
   // Redraw the texts of the open card in the current language. The stage (the
@@ -1227,9 +1221,6 @@
     var action = btn.dataset.action;
     if (action === "next" && nextTarget){
       openPanel(nextTarget.world, nextTarget.item);
-    } else if (action === "invite"){
-      var card = document.getElementById("inviteCard");
-      if (card) card.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block:"center" });
     }
   });
 

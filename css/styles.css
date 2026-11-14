@@ -299,8 +299,6 @@ svg{display:block;}
 .legend li{display:inline-flex; align-items:center; gap:8px; font-size:15px; color:var(--ink-dim);}
 .key{width:18px; height:18px; flex:none; display:inline-block; position:relative;}
 .key.k-new{border-radius:50%; background:radial-gradient(circle, #fff 0 22%, var(--accent) 24% 55%, rgba(var(--accent-rgb), .25) 57%);}
-.key.k-project{border:2px solid var(--signal); transform:rotate(45deg) scale(.82); border-radius:3px;}
-.key.k-project::after{content:""; position:absolute; inset:3px; border-radius:50%; background:var(--signal);}
 .key.k-seen{border-radius:50%; border:2px solid var(--accent); background:var(--bg);}
 .key.k-seen::after{
   content:""; position:absolute; left:4px; top:1.5px; width:4px; height:8px;
@@ -430,16 +428,6 @@ footer.site{max-width:1120px; margin:0 auto; padding:22px var(--gutter) 40px; co
   font-size:15px; font-weight:600; color:var(--ink); background:rgba(5,8,18,.75);
   padding:10px 16px; border-radius:12px; border:1px solid var(--line); text-align:center;
 }
-.slot-btn{
-  appearance:none; position:absolute; left:12px; bottom:12px; z-index:2; cursor:pointer;
-  display:inline-flex; align-items:center; gap:8px; min-height:44px; padding:6px 16px 6px 10px;
-  border-radius:999px; border:2px dashed var(--signal); background:rgba(7,11,24,.82);
-  color:var(--signal); font-size:15px; font-weight:700;
-  transition:background .2s, transform .15s var(--ease);
-}
-.slot-btn:hover{background:rgba(var(--signal-rgb), .16);}
-.slot-btn:active{transform:scale(.96);}
-.slot-btn svg{width:20px; height:20px;}
 
 /* student video (projects/_video.js): the clip is shown whole; a blurred, darkened
    copy of its poster fills the sides instead of black bars */
@@ -560,14 +548,6 @@ footer.site{max-width:1120px; margin:0 auto; padding:22px var(--gutter) 40px; co
 }
 .note b{color:var(--ok);}
 
-.invite-card{
-  margin-top:24px; padding:16px; border-radius:var(--radius); border:2px dashed var(--signal);
-  background:rgba(var(--signal-rgb), .07); display:grid; grid-template-columns:auto 1fr; gap:14px; align-items:start;
-}
-.invite-icon{width:44px; height:44px; border-radius:50%; background:var(--signal); color:var(--ink-on-accent); display:grid; place-items:center;}
-.invite-icon svg{width:22px; height:22px;}
-.invite-card strong{display:block; font-family:var(--font-display); font-weight:500; font-size:16px; line-height:1.3; color:var(--ink);}
-.invite-card p{margin-top:6px; font-size:16px; color:var(--ink-dim);}
 
 .next-btn{
   appearance:none; margin-top:24px; width:100%; min-height:60px; cursor:pointer; text-align:left;
