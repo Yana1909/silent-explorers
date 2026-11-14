@@ -2,8 +2,7 @@
 (function(){
   window.STUDENT_PROJECTS = window.STUDENT_PROJECTS || {};
   window.STUDENT_PROJECTS['opportunity'] = {
-    title: "Пилова буря",
-    author: "Приклад проєкту",
+    title: { en: "Dust Storm", uk: "Пилова буря" },
     type: "game",
     init: function(container){
       container.innerHTML = '';

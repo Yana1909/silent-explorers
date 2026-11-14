@@ -263,7 +263,7 @@
   // Text in the current language (js/i18n.js, js/i18n-objects.js). The English
   // DATA above is the source; the Ukrainian text of each object lives in I18N_OBJECTS.uk.
   function worldName(world){ return t("world." + world); }
-  function typeLabel(type){ return t("type." + (type === "game" || type === "video" || type === "comic" ? type : "animation")); }
+  function typeLabel(type){ return t("type." + (type === "game" || type === "quiz" || type === "video" || type === "comic" ? type : "animation")); }
   function loc(item){ return window.localizeItem(item); }
 
   var root = document.documentElement;
@@ -1119,7 +1119,7 @@
   function bylineHtml(st){
     var proj = st.proj;
     return proj
-      ? '<div class="project-byline has-project"><span class="type">' + ICON.play + typeLabel(proj.type) + '</span><span>' + t("project.byline", { title:pick(proj.title), author:pick(proj.author) }) + '</span></div>'
+      ? '<div class="project-byline has-project"><span class="type">' + ICON.play + typeLabel(proj.type) + '</span><span>' + t("project.byline", { title:pick(proj.title) }) + '</span></div>'
       : '<div class="project-byline">' + t("project.ref") + '</div>';
   }
 

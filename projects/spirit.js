@@ -4,7 +4,6 @@
   window.createVideoProject({
     id: "spirit",
     title: { en: "Spirit's Diary", uk: "Щоденник Spirit" },
-    author: "ITSTEP Mykolaiv Navis",
     src: "assets/video/spirit.mp4",
     poster: "assets/video/spirit.jpg",
     alt: { en: "A toy-like model of the Spirit rover standing on the open pages of a diary", uk: "Модель марсохода Spirit на розкритих сторінках щоденника" },

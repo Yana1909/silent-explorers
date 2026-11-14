@@ -5,7 +5,6 @@
 
   var CONTENT = {
     title: { en: "Surveyor 3: Lunar Encounter", uk: "Surveyor 3: зустріч на Місяці" },
-    author: "ITSTEP Mykolaiv Navis",
     note: { en: "AI-generated illustrations based on real mission facts", uk: "Ілюстрації створені ШІ за реальними фактами місії" },
     pages: [
       { src: "assets/projects/surveyor3/01.jpg",
@@ -51,7 +50,6 @@
 
   window.STUDENT_PROJECTS["surveyor3"] = {
     title: CONTENT.title,
-    author: CONTENT.author,
     type: "comic",
     init: function(container){
       var pages = CONTENT.pages, total = pages.length, current = 0;

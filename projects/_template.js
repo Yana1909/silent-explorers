@@ -8,13 +8,13 @@
        for example projects/spirit.js. The list of ids is in README.md.
     2. Write the same id into LOCATION_ID below. While it is empty,
        this file does nothing at all.
-    3. Fill in title, author and type, then draw your scene in draw().
+    3. Fill in title and type, then draw your scene in draw().
     4. Ask a mentor to add  <script src="projects/<your id>.js"></script>
        to index.html, next to the other project scripts.
 
   The contract (the same for every project):
     window.STUDENT_PROJECTS[<location id>] = {
-      title, author, type: "animation" | "game" | "video",
+      title, type: "animation" | "game" | "quiz" | "video",
       init(container, item) { ...; return cleanup; }
     };
   `container` is an empty box, about 16:10, already sized by the page.
@@ -33,8 +33,7 @@
   window.STUDENT_PROJECTS = window.STUDENT_PROJECTS || {};
   window.STUDENT_PROJECTS[LOCATION_ID] = {
     title: "My project",         // <-- short name of your project (or { en: "...", uk: "..." })
-    author: "Your name",         // <-- your name (or { en, uk })
-    type: "animation",           // <-- "animation" or "game"
+    type: "animation",           // <-- "animation", "game" or "quiz"
     init: function(container, item){
       // ---------- canvas that always fills the box ----------
       var canvas = document.createElement("canvas");

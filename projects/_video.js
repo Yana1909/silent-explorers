@@ -6,7 +6,6 @@
     window.createVideoProject({
       id: "<location id>",                      // which marker the clip belongs to
       title: "Clip name",                       // a string, or { en: "...", uk: "..." }
-      author: "Your name",                      // a string, or { en, uk }
       src: "assets/video/<location id>.mp4",    // H.264 + AAC, see README for the ffmpeg command
       poster: "assets/video/<location id>.jpg", // one frame of the clip, shown before playback
       note: "Artist's reconstruction — not NASA footage",  // honesty label, always shown (string or { en, uk })
@@ -19,7 +18,7 @@
   copy of the poster filling the sides. Styles: css/styles.css, ".video-project".
   Load this file before any project file that calls it.
 
-  Languages: title, author, note and alt may each be a plain string or an
+  Languages: title, note and alt may each be a plain string or an
   object { en: "...", uk: "..." } (resolved with window.pick). The texts of the
   button, the label and the error message come from the dictionary (window.t,
   js/i18n.js). When the language is switched while the clip is open, only these
@@ -38,7 +37,6 @@
 
     window.STUDENT_PROJECTS[opts.id] = {
       title: opts.title || { en: "Video", uk: "Відео" },
-      author: opts.author || "",
       type: "video",
       init: function(container){
         container.innerHTML = "";

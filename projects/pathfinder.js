@@ -37,7 +37,6 @@
   /* ---------- texts: { en, uk } ---------- */
   var TXT = {
     title: { en: "Airbag Landing", uk: "Посадка на подушках" },
-    author: "Yurii",
     introTitle: { en: "Land Pathfinder", uk: "Посади Патфайндер" },
     introBody: {
       en: "July 4, 1997. Pathfinder falls toward Ares Vallis on a parachute. Inflate the airbags at about 100\u00A0m, then steer the bounces away from sharp rocks.",
@@ -107,7 +106,6 @@
   window.STUDENT_PROJECTS = window.STUDENT_PROJECTS || {};
   window.STUDENT_PROJECTS[LOCATION_ID] = {
     title: TXT.title,
-    author: TXT.author,
     type: "game",
     init: function (container) {
       container.innerHTML = "";
